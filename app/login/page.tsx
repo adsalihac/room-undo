@@ -67,7 +67,7 @@ export default function LoginPage() {
           <Logo size={40} showWordmark={false} />
         </div>
         <h2 className="mt-5 text-center text-2xl font-bold text-primary-text">
-          {isSignUp ? "Create Account" : "Admin Login"}
+          {isSignUp ? "Create Account" : "Login"}
         </h2>
         <p className="mt-1.5 text-center text-[15px] text-secondary-text">
           {isSignUp
