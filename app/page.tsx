@@ -1,65 +1,84 @@
-import Image from "next/image";
+"use client";
+
+import dynamic from "next/dynamic";
+import { useState } from "react";
+import TopNav from "@/components/TopNav";
+import FilterPanel from "@/components/FilterPanel";
+import RoomDetailDrawer from "@/components/RoomDetailDrawer";
+import type { Room } from "@/components/MapComponent";
+
+// Dynamically import MapComponent with ssr disabled to prevent leaflet window errors
+const MapComponent = dynamic(() => import("@/components/MapComponent"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+      <div className="animate-pulse flex flex-col items-center gap-4">
+        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
+        <div className="text-secondary-text font-medium">Loading Map...</div>
+      </div>
+    </div>
+  ),
+});
+
+// Dummy Data
+const DUMMY_ROOMS: Room[] = [
+  {
+    id: "1",
+    title: "Premium PG Near Technopark",
+    price: 6500,
+    latitude: 10.5505,
+    longitude: 76.2711,
+    property_type: "PG",
+    image_url: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80"
+  },
+  {
+    id: "2",
+    title: "1BHK Apartment Kazhakkoottam",
+    price: 12000,
+    latitude: 10.8605,
+    longitude: 76.2811,
+    property_type: "Apartment",
+    image_url: "https://images.unsplash.com/photo-1502672260266-1c1e5250ce07?auto=format&fit=crop&q=80"
+  },
+  {
+    id: "3",
+    title: "Shared Room for Boys",
+    price: 4500,
+    latitude: 10.8405,
+    longitude: 76.2611,
+    property_type: "Shared Room",
+    image_url: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80"
+  },
+  {
+    id: "4",
+    title: "Luxury Hostel Kakkanad",
+    price: 8000,
+    latitude: 10.0159,
+    longitude: 76.3419,
+    property_type: "Hostel",
+    image_url: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80"
+  }
+];
 
 export default function Home() {
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="relative w-full h-full overflow-hidden">
+      <TopNav />
+      <FilterPanel />
+      
+      <div className="w-full h-full">
+        <MapComponent 
+          rooms={DUMMY_ROOMS} 
+          onRoomSelect={(room) => setSelectedRoom(room)} 
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </div>
+
+      <RoomDetailDrawer 
+        room={selectedRoom} 
+        onClose={() => setSelectedRoom(null)} 
+      />
+    </main>
   );
 }
