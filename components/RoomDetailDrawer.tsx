@@ -55,14 +55,14 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
               
               <div className="flex items-center gap-1.5 text-secondary-text mb-4">
                 <MapPin className="w-4 h-4" />
-                <span className="text-sm">Technopark, Kazhakkoottam</span>
+                <span className="text-sm">{room.location_name}</span>
               </div>
 
               <div className="flex items-baseline gap-2 mb-2">
                 <span className="text-3xl font-bold text-primary-text">₹{room.price.toLocaleString("en-IN")}</span>
                 <span className="text-secondary-text">/ month</span>
               </div>
-              <p className="text-sm text-secondary-text">Deposit: ₹{(room.price * 2).toLocaleString("en-IN")}</p>
+              <p className="text-sm text-secondary-text">Deposit: ₹{room.deposit.toLocaleString("en-IN")}</p>
             </div>
 
             <hr className="border-border-color mb-6" />
@@ -71,7 +71,7 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-primary-text mb-4">Amenities</h3>
               <div className="flex flex-wrap gap-3">
-                {["WiFi", "AC", "Attached Bathroom", "Parking", "Kitchen"].map(amenity => (
+                {room.amenities.map(amenity => (
                   <div key={amenity} className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-xl border border-border-color">
                     <CheckCircle2 className="w-4 h-4 text-success" />
                     <span className="text-sm font-medium text-primary-text">{amenity}</span>
@@ -86,49 +86,54 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
             <div className="mb-6">
               <h3 className="text-lg font-semibold text-primary-text mb-3">About this room</h3>
               <p className="text-secondary-text text-sm leading-relaxed">
-                Beautiful and spacious {room.property_type.toLowerCase()} located just a few minutes away from the main tech park. 
-                Perfect for IT professionals looking for a peaceful stay. Well maintained and recently renovated.
+                {room.description}
               </p>
             </div>
 
             <hr className="border-border-color mb-6" />
 
             {/* Reviews */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-primary-text">Reviews</h3>
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                  <span className="font-semibold text-primary-text">4.8</span>
-                  <span className="text-secondary-text text-sm">(24)</span>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 p-4 rounded-2xl">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium text-primary-text">Rahul M.</span>
-                  <div className="flex">
-                    {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />)}
+            {room.reviews.length > 0 && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-primary-text">Reviews</h3>
+                  <div className="flex items-center gap-1">
+                    <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                    <span className="font-semibold text-primary-text">
+                      {(room.reviews.reduce((sum, r) => sum + r.rating, 0) / room.reviews.length).toFixed(1)}
+                    </span>
+                    <span className="text-secondary-text text-sm">({room.reviews.length})</span>
                   </div>
                 </div>
-                <p className="text-sm text-secondary-text">
-                  Clean property and convenient location. The owner is very responsive.
-                </p>
+
+                {room.reviews.map((review, index) => (
+                  <div key={index} className="bg-gray-50 p-4 rounded-2xl mb-3 last:mb-0">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-primary-text">{review.username}</span>
+                      <div className="flex">
+                        {Array.from({ length: review.rating }, (_, i) => (
+                          <Star key={i} className="w-3 h-3 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                    </div>
+                    <p className="text-sm text-secondary-text">{review.comment}</p>
+                  </div>
+                ))}
               </div>
-            </div>
+            )}
             
           </div>
 
           {/* Sticky Action Footer */}
           <div className="absolute bottom-0 left-0 right-0 bg-white border-t border-border-color p-4 flex gap-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-            <button className="flex-1 bg-primary-text text-white rounded-xl py-3.5 font-semibold hover:bg-primary-text/90 transition-colors flex items-center justify-center gap-2">
+            <a href={`tel:${room.phone}`} className="flex-1 bg-primary-text text-white rounded-xl py-3.5 font-semibold hover:bg-primary-text/90 transition-colors flex items-center justify-center gap-2">
               <Phone className="w-5 h-5" />
               Call Owner
-            </button>
-            <button className="flex-1 bg-success text-white rounded-xl py-3.5 font-semibold hover:bg-success/90 transition-colors flex items-center justify-center gap-2">
+            </a>
+            <a href={`https://wa.me/${room.whatsapp.replace(/\+/g, "").replace(/\s/g, "")}`} target="_blank" rel="noopener noreferrer" className="flex-1 bg-success text-white rounded-xl py-3.5 font-semibold hover:bg-success/90 transition-colors flex items-center justify-center gap-2">
               <MessageCircle className="w-5 h-5" />
               WhatsApp
-            </button>
+            </a>
           </div>
         </>
       )}

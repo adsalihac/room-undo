@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { UploadCloud, MapPin } from "lucide-react";
+import { UploadCloud, MapPin, Loader2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
 // In a real app we'd use a separate Map for dropping a pin
 const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
@@ -25,6 +27,9 @@ const schema = z.object({
 
 export default function AddRoom() {
   const [coordinates, setCoordinates] = useState({ lat: 10.8505, lng: 76.2711 });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
 
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -34,10 +39,27 @@ export default function AddRoom() {
     }
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Submitting:", { ...data, ...coordinates });
-    // Handle Supabase insert here
-    alert("Room successfully added!");
+  const onSubmit = async (data: any) => {
+    setIsSubmitting(true);
+    
+    // Format data for insertion
+    const payload = {
+      ...data,
+      latitude: coordinates.lat,
+      longitude: coordinates.lng,
+      available: true
+    };
+
+    const { error } = await supabase.from("rooms").insert([payload]);
+    
+    setIsSubmitting(false);
+
+    if (error) {
+      alert("Failed to add room: " + error.message);
+    } else {
+      router.push("/admin/rooms");
+      router.refresh();
+    }
   };
 
   return (
@@ -199,7 +221,12 @@ export default function AddRoom() {
           <button type="button" className="px-6 py-3 rounded-xl font-medium text-primary-text hover:bg-gray-100 transition-colors">
             Cancel
           </button>
-          <button type="submit" className="px-8 py-3 rounded-xl font-bold bg-success text-white hover:bg-success/90 transition-colors shadow-md">
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="flex items-center gap-2 px-8 py-3 rounded-xl font-bold bg-success text-white hover:bg-success/90 transition-colors shadow-md disabled:opacity-50"
+          >
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
             Publish Room
           </button>
         </div>

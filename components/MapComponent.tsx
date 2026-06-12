@@ -11,11 +11,21 @@ import { renderToString } from "react-dom/server";
 export interface Room {
   id: string;
   title: string;
+  description: string;
   price: number;
+  deposit: number;
   latitude: number;
   longitude: number;
   property_type: string;
+  gender_preference: string;
+  location_name: string;
+  available: boolean;
+  owner_name: string;
+  phone: string;
+  whatsapp: string;
   image_url: string;
+  amenities: string[];
+  reviews: { username: string; rating: number; comment: string }[];
 }
 
 interface MapComponentProps {
