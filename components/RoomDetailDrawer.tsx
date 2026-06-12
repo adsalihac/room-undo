@@ -28,20 +28,6 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
 
       {room && (
         <>
-          {/* Image */}
-          <div className="relative w-full h-64 bg-gray-100 shrink-0">
-            <img 
-              src={room.image_url || "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&q=80"} 
-              alt={room.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute bottom-4 left-4">
-              <div className="bg-white/90 backdrop-blur-sm px-3 py-1 rounded-lg text-[12px] font-semibold text-primary-text tracking-wider uppercase shadow-sm">
-                {room.property_type}
-              </div>
-            </div>
-          </div>
-
           {/* Content */}
           <div className="flex-1 overflow-y-auto px-8 py-6 pb-28">
             <div className="mb-8">
@@ -58,7 +44,11 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
                 <span className="text-3xl font-bold text-primary-text tracking-tight">₹{room.price.toLocaleString("en-IN")}</span>
                 <span className="text-[15px] text-secondary-text">/ month</span>
               </div>
-              <p className="text-[14px] text-secondary-text">Deposit: ₹{room.deposit.toLocaleString("en-IN")}</p>
+              <div className="flex items-center gap-2 text-[14px] text-secondary-text">
+                <span>Deposit: ₹{room.deposit.toLocaleString("en-IN")}</span>
+                <span className="text-border-color">·</span>
+                <span>{room.property_type}</span>
+              </div>
             </div>
 
             <div className="space-y-8">

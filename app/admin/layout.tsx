@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Home, List, PlusCircle, LogOut } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import Logo from "@/components/Logo";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -20,10 +21,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-full md:w-64 bg-surface border-r border-border-color flex flex-col shrink-0">
         <div className="px-6 py-5 border-b border-border-color">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#0F172A' }}>
-              <span className="text-white font-semibold text-sm leading-none mt-[1px]">R</span>
-            </div>
-            <span className="font-semibold text-[14px] text-primary-text">RoomUndo</span>
+            <Logo size={28} />
           </Link>
           <span className="text-[12px] text-secondary-text mt-0.5 block font-medium uppercase tracking-[0.12em]">Admin</span>
         </div>

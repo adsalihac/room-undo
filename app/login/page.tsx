@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { LogIn, ArrowLeft, UserPlus } from "lucide-react";
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -63,9 +64,7 @@ export default function LoginPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#0F172A' }}>
-            <span className="text-white font-bold text-lg leading-none mt-[1px]">R</span>
-          </div>
+          <Logo size={40} showWordmark={false} />
         </div>
         <h2 className="mt-5 text-center text-2xl font-bold text-primary-text">
           {isSignUp ? "Create Account" : "Admin Login"}

@@ -5,6 +5,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "RoomUndo — Find rooms around you",
   description: "Discover rooms, PGs, hostels, and shared accommodations on an interactive map.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

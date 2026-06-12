@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +9,8 @@ import * as z from "zod";
 import { MapPin, Loader2, ArrowLeft } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Link from "next/link";
+
+const LocationPicker = dynamic(() => import("@/components/LocationPicker"), { ssr: false });
 
 const schema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -30,6 +33,7 @@ export default function EditRoom() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isAvailable, setIsAvailable] = useState(true);
+  const [coordinates, setCoordinates] = useState({ lat: 10.8505, lng: 76.2711 });
 
   const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
     resolver: zodResolver(schema),
@@ -39,7 +43,7 @@ export default function EditRoom() {
     const fetchRoom = async () => {
       const { data, error } = await supabase
         .from("rooms")
-        .select("*")
+        .select("*, room_images(id, image_url)")
         .eq("id", params.id)
         .single();
 
@@ -49,6 +53,7 @@ export default function EditRoom() {
       }
 
       setIsAvailable(data.available);
+      setCoordinates({ lat: data.latitude, lng: data.longitude });
       reset({
         title: data.title,
         price: data.price,
@@ -72,17 +77,23 @@ export default function EditRoom() {
 
     const { error } = await supabase
       .from("rooms")
-      .update({ ...data, available: isAvailable })
+      .update({
+        ...data,
+        available: isAvailable,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+      })
       .eq("id", params.id);
 
-    setIsSubmitting(false);
-
     if (error) {
+      setIsSubmitting(false);
       alert("Failed to update room: " + error.message);
-    } else {
-      router.push("/admin/rooms");
-      router.refresh();
+      return;
     }
+
+    setIsSubmitting(false);
+    router.push("/admin/rooms");
+    router.refresh();
   };
 
   if (isLoading) {
@@ -179,6 +190,21 @@ export default function EditRoom() {
               {...register("location_name")}
               className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all"
             />
+          </div>
+          <div>
+            <label className="block text-[13px] font-medium text-primary-text mb-1.5">Pin Location on Map</label>
+            <div className="w-full h-72 bg-gray-100 rounded-xl overflow-hidden border border-border-color relative">
+              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                <MapPin className="w-7 h-7 text-primary-text -mt-8 drop-shadow-md" />
+              </div>
+              <LocationPicker
+                center={coordinates}
+                onCenterChange={(c) => setCoordinates(c)}
+              />
+            </div>
+            <p className="text-[12px] text-secondary-text mt-1.5">
+              Drag the map to place the pin at the property location.
+            </p>
           </div>
         </div>
 

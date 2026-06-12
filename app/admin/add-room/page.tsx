@@ -6,10 +6,10 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { UploadCloud, MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
-const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
+const LocationPicker = dynamic(() => import("@/components/LocationPicker"), { ssr: false });
 
 const schema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -40,16 +40,16 @@ export default function AddRoom() {
 
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
-    
+
     const payload = {
       ...data,
       latitude: coordinates.lat,
       longitude: coordinates.lng,
-      available: true
+      available: true,
     };
 
     const { error } = await supabase.from("rooms").insert([payload]);
-    
+
     setIsSubmitting(false);
 
     if (error) {
@@ -161,7 +161,10 @@ export default function AddRoom() {
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
                 <MapPin className="w-7 h-7 text-primary-text -mt-8 drop-shadow-md" />
               </div>
-              <MapComponent rooms={[]} onRoomSelect={() => {}} />
+              <LocationPicker
+                center={coordinates}
+                onCenterChange={(c) => setCoordinates(c)}
+              />
             </div>
             <p className="text-[12px] text-secondary-text mt-1.5">
               Drag the map to place the pin at the property location.
@@ -194,19 +197,6 @@ export default function AddRoom() {
                 className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
               />
             </div>
-          </div>
-        </div>
-
-        {/* Photos */}
-        <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
-          <h2 className="text-[14px] font-semibold text-primary-text">Photos</h2>
-          
-          <div className="border-2 border-dashed border-border-color rounded-2xl p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
-            <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-3">
-              <UploadCloud className="w-6 h-6 text-secondary-text" />
-            </div>
-            <h3 className="text-[14px] font-medium text-primary-text mb-0.5">Click to upload photos</h3>
-            <p className="text-[13px] text-secondary-text">PNG, JPG or WEBP (max. 5MB)</p>
           </div>
         </div>
 
