@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
-
 export const metadata: Metadata = {
-  title: "RoomUndo - Find Rooms Around You",
-  description: "Discover rooms, PGs, hostels, shared accommodations directly from an interactive map.",
+  title: "RoomUndo — Find rooms around you",
+  description: "Discover rooms, PGs, hostels, and shared accommodations on an interactive map.",
 };
 
 export default function RootLayout({
@@ -20,9 +15,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full antialiased`}
+      className={`${GeistSans.variable} h-full antialiased`}
     >
-      <body className="h-full w-full overflow-hidden flex flex-col">{children}</body>
+      <body className="h-full w-full overflow-hidden flex flex-col bg-background text-primary-text">{children}</body>
     </html>
   );
 }

@@ -1,60 +1,54 @@
 "use client";
 
 import Link from "next/link";
-import { Search, UserCircle, Plus } from "lucide-react";
+import { Search, Plus, User } from "lucide-react";
 import { useState } from "react";
 
 export default function TopNav() {
   const [searchQuery, setSearchQuery] = useState("");
 
   return (
-    <nav className="absolute top-4 left-0 right-0 z-[1000] px-4 pointer-events-none">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-        
+    <nav className="fixed top-4 left-4 right-4 z-[1000] flex items-center justify-center pointer-events-none">
+      <div className="w-full max-w-5xl mx-auto flex items-center justify-between gap-3 px-4 h-[72px] bg-white/80 backdrop-blur-xl border border-border-color rounded-2xl shadow-sm pointer-events-auto">
         {/* Logo */}
-        <div className="bg-white px-5 py-3 rounded-full shadow-md pointer-events-auto flex items-center gap-2">
-          <div className="w-8 h-8 bg-success rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-lg leading-none mt-[2px]">R</span>
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#0F172A' }}>
+            <span className="text-white font-semibold text-sm leading-none mt-[1px]">R</span>
           </div>
-          <Link href="/" className="font-bold text-xl tracking-tight text-primary-text hidden sm:block">
+          <span className="font-semibold text-[14px] text-primary-text tracking-tight hidden sm:block">
             RoomUndo
-          </Link>
-        </div>
+          </span>
+        </Link>
 
-        {/* Search Bar */}
-        <div className="flex-1 max-w-lg bg-white rounded-full shadow-md pointer-events-auto flex items-center px-4 py-2 border border-border-color transition-shadow hover:shadow-lg focus-within:shadow-lg focus-within:border-success/30">
-          <Search className="w-5 h-5 text-secondary-text" />
+        {/* Search */}
+        <div className="flex-1 max-w-md flex items-center gap-2 px-3 py-1.5 bg-gray-50 rounded-xl border border-border-color transition-all duration-200 focus-within:border-primary-text/30 focus-within:bg-white">
+          <Search className="w-4 h-4 text-secondary-text shrink-0" />
           <input
             type="text"
-            placeholder="Search location (e.g. Technopark)..."
+            placeholder="Search location..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent border-none outline-none px-3 py-1 text-primary-text placeholder:text-secondary-text/70"
+            className="w-full bg-transparent border-none outline-none text-[14px] text-primary-text placeholder:text-secondary-text/60 py-1"
           />
-          <button className="bg-success text-white px-4 py-1.5 rounded-full text-sm font-medium hover:bg-success/90 transition-colors">
-            Search
-          </button>
         </div>
 
         {/* Actions */}
-        <div className="bg-white rounded-full shadow-md pointer-events-auto flex items-center p-1 border border-border-color">
+        <div className="flex items-center gap-1.5">
           <Link
             href="/admin/add-room"
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-primary-text hover:bg-gray-50 rounded-full transition-colors"
+            className="flex items-center gap-1.5 px-4 h-[36px] text-[13px] font-medium text-white rounded-xl transition-colors"
+            style={{ backgroundColor: '#0F172A' }}
           >
             <Plus className="w-4 h-4" />
             <span className="hidden sm:inline">Post Room</span>
           </Link>
-          <div className="w-[1px] h-6 bg-border-color mx-1" />
           <Link
             href="/login"
-            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-primary-text hover:bg-gray-50 rounded-full transition-colors"
+            className="flex items-center justify-center w-[36px] h-[36px] text-secondary-text hover:text-primary-text hover:bg-gray-100 rounded-xl transition-colors"
           >
-            <UserCircle className="w-5 h-5" />
-            <span className="hidden sm:inline">Login</span>
+            <User className="w-4 h-4" />
           </Link>
         </div>
-
       </div>
     </nav>
   );

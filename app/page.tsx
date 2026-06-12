@@ -8,14 +8,13 @@ import RoomDetailDrawer from "@/components/RoomDetailDrawer";
 import type { Room } from "@/components/MapComponent";
 import { createClient } from "@/utils/supabase/client";
 
-// Dynamically import MapComponent with ssr disabled to prevent leaflet window errors
 const MapComponent = dynamic(() => import("@/components/MapComponent"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-      <div className="animate-pulse flex flex-col items-center gap-4">
-        <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-        <div className="text-secondary-text font-medium">Loading Map...</div>
+    <div className="w-full h-full bg-background flex items-center justify-center">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-6 h-6 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
+        <div className="text-[14px] text-secondary-text font-medium">Loading map...</div>
       </div>
     </div>
   ),
@@ -65,12 +64,12 @@ export default function Home() {
 
   if (loading) {
     return (
-      <main className="relative w-full h-full overflow-hidden">
+      <main className="relative w-full h-full overflow-hidden bg-background">
         <TopNav />
-        <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-          <div className="animate-pulse flex flex-col items-center gap-4">
-            <div className="w-12 h-12 bg-gray-300 rounded-full"></div>
-            <div className="text-secondary-text font-medium">Loading rooms...</div>
+        <div className="w-full h-full flex items-center justify-center">
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-6 h-6 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
+            <div className="text-[14px] text-secondary-text font-medium">Loading rooms...</div>
           </div>
         </div>
       </main>
@@ -78,7 +77,7 @@ export default function Home() {
   }
 
   return (
-    <main className="relative w-full h-full overflow-hidden">
+    <main className="relative w-full h-full overflow-hidden bg-background">
       <TopNav />
       <FilterPanel />
       

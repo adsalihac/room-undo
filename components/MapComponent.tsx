@@ -3,10 +3,6 @@
 import { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
-import { renderToString } from "react-dom/server";
-
-// We need a way to pass selected room state upwards or handle drawer
-// For now we'll accept a prop onRoomSelect
 
 export interface Room {
   id: string;
@@ -33,13 +29,24 @@ interface MapComponentProps {
   onRoomSelect: (room: Room) => void;
 }
 
-// Custom Marker component
 const createCustomIcon = (price: number, isSelected: boolean) => {
   const formattedPrice = `₹${price.toLocaleString("en-IN")}`;
-  
+
   const html = `
-    <div class="relative transform transition-transform duration-200 ${isSelected ? 'scale-110 z-50' : 'hover:scale-110'}">
-      <div class="px-3 py-1.5 bg-white text-primary-text font-bold text-sm rounded-full shadow-md border ${isSelected ? 'border-success' : 'border-border-color'} whitespace-nowrap">
+    <div class="transition-all duration-200 ${isSelected ? 'scale-110 z-[1000]' : ''}" style="filter: ${isSelected ? 'drop-shadow(0 8px 24px rgba(0,0,0,0.15))' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.06))'};">
+      <div style="
+        background: white;
+        border-radius: 999px;
+        padding: 10px 16px;
+        font-weight: 600;
+        font-size: 14px;
+        color: #111827;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border: ${isSelected ? '1.5px solid #111827' : '1px solid #E5E7EB'};
+        white-space: nowrap;
+        transition: all 200ms ease;
+        font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+      ">
         ${formattedPrice}
       </div>
     </div>
@@ -48,8 +55,8 @@ const createCustomIcon = (price: number, isSelected: boolean) => {
   return L.divIcon({
     html,
     className: 'custom-leaflet-marker',
-    iconSize: [60, 30],
-    iconAnchor: [30, 15],
+    iconSize: [120, 44],
+    iconAnchor: [60, 22],
   });
 };
 
@@ -67,7 +74,6 @@ function MapEventHandler({ onMapClick }: { onMapClick: () => void }) {
 export default function MapComponent({ rooms, onRoomSelect }: MapComponentProps) {
   const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
 
-  // Center of Kerala approx
   const center: L.LatLngExpression = [10.8505, 76.2711];
 
   const handleRoomClick = (room: Room) => {
@@ -77,7 +83,6 @@ export default function MapComponent({ rooms, onRoomSelect }: MapComponentProps)
 
   const handleMapClick = () => {
     setSelectedRoomId(null);
-    // Ideally we also hide the drawer here, but let's assume the drawer handles its own close
   };
 
   return (
@@ -88,8 +93,8 @@ export default function MapComponent({ rooms, onRoomSelect }: MapComponentProps)
       className="w-full h-full"
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
       />
       <MapEventHandler onMapClick={handleMapClick} />
       

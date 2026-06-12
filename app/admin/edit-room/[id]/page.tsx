@@ -1,15 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { UploadCloud, MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2, ArrowLeft } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-
-const MapComponent = dynamic(() => import("@/components/MapComponent"), { ssr: false });
+import Link from "next/link";
 
 const schema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
@@ -22,92 +20,126 @@ const schema = z.object({
   owner_name: z.string().min(3, "Owner name is required"),
   phone: z.string().min(10, "Valid phone number required"),
   whatsapp: z.string().min(10, "Valid WhatsApp number required"),
+  available: z.boolean().optional(),
 });
 
-export default function AddRoom() {
-  const [coordinates, setCoordinates] = useState({ lat: 10.8505, lng: 76.2711 });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function EditRoom() {
+  const params = useParams();
   const router = useRouter();
   const supabase = createClient();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAvailable, setIsAvailable] = useState(true);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset, setValue } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: {
-      property_type: "Private Room",
-      gender_preference: "Any",
-    }
   });
+
+  useEffect(() => {
+    const fetchRoom = async () => {
+      const { data, error } = await supabase
+        .from("rooms")
+        .select("*")
+        .eq("id", params.id)
+        .single();
+
+      if (error || !data) {
+        router.push("/admin/rooms");
+        return;
+      }
+
+      setIsAvailable(data.available);
+      reset({
+        title: data.title,
+        price: data.price,
+        deposit: data.deposit,
+        property_type: data.property_type,
+        gender_preference: data.gender_preference,
+        description: data.description,
+        location_name: data.location_name,
+        owner_name: data.owner_name,
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+      });
+      setIsLoading(false);
+    };
+
+    fetchRoom();
+  }, [params.id, reset, supabase, router]);
 
   const onSubmit = async (data: any) => {
     setIsSubmitting(true);
-    
-    const payload = {
-      ...data,
-      latitude: coordinates.lat,
-      longitude: coordinates.lng,
-      available: true
-    };
 
-    const { error } = await supabase.from("rooms").insert([payload]);
-    
+    const { error } = await supabase
+      .from("rooms")
+      .update({ ...data, available: isAvailable })
+      .eq("id", params.id);
+
     setIsSubmitting(false);
 
     if (error) {
-      alert("Failed to add room: " + error.message);
+      alert("Failed to update room: " + error.message);
     } else {
       router.push("/admin/rooms");
       router.refresh();
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto pb-20">
+        <div className="flex items-center justify-center py-20">
+          <div className="w-5 h-5 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto pb-20">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary-text mb-1">Add Room</h1>
-        <p className="text-[15px] text-secondary-text">Fill in the details to list a new property.</p>
+        <Link href="/admin/rooms" className="inline-flex items-center gap-1.5 text-[14px] text-secondary-text hover:text-primary-text transition-colors mb-4">
+          <ArrowLeft className="w-4 h-4" />
+          Back to Rooms
+        </Link>
+        <h1 className="text-2xl font-bold text-primary-text mb-1">Edit Room</h1>
+        <p className="text-[15px] text-secondary-text">Update the property details.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Basic Info */}
         <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
           <h2 className="text-[14px] font-semibold text-primary-text">Basic Information</h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div className="md:col-span-2">
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">Title</label>
-              <input 
+              <input
                 {...register("title")}
-                placeholder="e.g. Premium 1BHK near Technopark"
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 focus:ring-0 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
               />
               {errors.title && <p className="text-error text-[12px] mt-1">{errors.title.message as string}</p>}
             </div>
 
             <div>
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">Monthly Rent (₹)</label>
-              <input 
+              <input
                 type="number"
                 {...register("price", { valueAsNumber: true })}
-                placeholder="0"
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all"
               />
             </div>
             <div>
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">Deposit (₹)</label>
-              <input 
+              <input
                 type="number"
                 {...register("deposit", { valueAsNumber: true })}
-                placeholder="0"
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all"
               />
             </div>
 
             <div>
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">Property Type</label>
-              <select 
-                {...register("property_type")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all bg-white"
-              >
+              <select {...register("property_type")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all bg-white">
                 <option value="Shared Room">Shared Room</option>
                 <option value="Private Room">Private Room</option>
                 <option value="PG">PG</option>
@@ -117,10 +149,7 @@ export default function AddRoom() {
             </div>
             <div>
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">Gender Preference</label>
-              <select 
-                {...register("gender_preference")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all bg-white"
-              >
+              <select {...register("gender_preference")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all bg-white">
                 <option value="Any">Any</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -130,98 +159,72 @@ export default function AddRoom() {
 
           <div>
             <label className="block text-[13px] font-medium text-primary-text mb-1.5">Description</label>
-            <textarea 
+            <textarea
               {...register("description")}
               rows={4}
-              placeholder="Describe the property, surroundings, and house rules..."
               className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all resize-none"
             />
           </div>
         </div>
 
-        {/* Location */}
         <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
           <h2 className="text-[14px] font-semibold text-primary-text flex items-center gap-2">
             <MapPin className="w-4 h-4 text-secondary-text" />
             Location
           </h2>
-          
-          <div>
-            <label className="block text-[13px] font-medium text-primary-text mb-1.5">Location Name / Area</label>
-            <input 
-              {...register("location_name")}
-              placeholder="e.g. Kazhakkoottam, Trivandrum"
-              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
-            />
-          </div>
 
           <div>
-            <label className="block text-[13px] font-medium text-primary-text mb-1.5">Pin Location on Map</label>
-            <div className="w-full h-72 bg-gray-100 rounded-xl overflow-hidden border border-border-color relative">
-              <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                <MapPin className="w-7 h-7 text-primary-text -mt-8 drop-shadow-md" />
-              </div>
-              <MapComponent rooms={[]} onRoomSelect={() => {}} />
-            </div>
-            <p className="text-[12px] text-secondary-text mt-1.5">
-              Drag the map to place the pin at the property location.
-            </p>
+            <label className="block text-[13px] font-medium text-primary-text mb-1.5">Location Name / Area</label>
+            <input
+              {...register("location_name")}
+              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all"
+            />
           </div>
         </div>
 
-        {/* Contact */}
         <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
           <h2 className="text-[14px] font-semibold text-primary-text">Contact Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">Owner Name</label>
-              <input 
-                {...register("owner_name")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
-              />
+              <input {...register("owner_name")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all" />
             </div>
             <div>
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">Phone</label>
-              <input 
-                {...register("phone")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
-              />
+              <input {...register("phone")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all" />
             </div>
             <div>
               <label className="block text-[13px] font-medium text-primary-text mb-1.5">WhatsApp</label>
-              <input 
-                {...register("whatsapp")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
-              />
+              <input {...register("whatsapp")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all" />
             </div>
           </div>
         </div>
 
-        {/* Photos */}
         <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
-          <h2 className="text-[14px] font-semibold text-primary-text">Photos</h2>
-          
-          <div className="border-2 border-dashed border-border-color rounded-2xl p-10 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-gray-50 transition-colors">
-            <div className="w-12 h-12 bg-gray-100 rounded-xl flex items-center justify-center mb-3">
-              <UploadCloud className="w-6 h-6 text-secondary-text" />
-            </div>
-            <h3 className="text-[14px] font-medium text-primary-text mb-0.5">Click to upload photos</h3>
-            <p className="text-[13px] text-secondary-text">PNG, JPG or WEBP (max. 5MB)</p>
-          </div>
+          <h2 className="text-[14px] font-semibold text-primary-text">Status</h2>
+          <label className="flex items-center gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isAvailable}
+              onChange={(e) => setIsAvailable(e.target.checked)}
+              className="w-4 h-4 rounded border-border-color text-[#0F172A] focus:ring-[#0F172A]/30"
+            />
+            <span className="text-[14px] text-primary-text">Available for rent</span>
+          </label>
         </div>
 
         <div className="flex justify-end gap-3">
-          <button type="button" className="h-[44px] px-6 rounded-xl text-[14px] font-medium text-primary-text border border-border-color hover:bg-gray-50 transition-colors">
+          <Link href="/admin/rooms" className="flex items-center h-[44px] px-6 rounded-xl text-[14px] font-medium text-primary-text border border-border-color hover:bg-gray-50 transition-colors">
             Cancel
-          </button>
-          <button 
-            type="submit" 
+          </Link>
+          <button
+            type="submit"
             disabled={isSubmitting}
             className="flex items-center gap-2 h-[44px] px-6 rounded-xl text-[14px] font-medium text-white disabled:opacity-50 transition-colors"
             style={{ backgroundColor: '#0F172A' }}
           >
             {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            Publish Room
+            Save Changes
           </button>
         </div>
       </form>

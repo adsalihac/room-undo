@@ -2,39 +2,72 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme inline {
-  --color-background: #FFFFFF;
+  --color-background: #FAFAFA;
+  --color-surface: #FFFFFF;
   --color-primary-text: #111827;
   --color-secondary-text: #6B7280;
   --color-border-color: #E5E7EB;
-  --color-success: #10B981;
+  --color-accent: #0F172A;
   --color-error: #EF4444;
 
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-geist-sans);
 }
 
-:root {
-  --background: #FFFFFF;
-  --foreground: #111827;
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
 }
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding: 0;
-}
-
-/* Custom map container adjustments */
+/* ─── Leaflet overrides ─── */
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 0;
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
 }
 
-/* Hide scrollbar for premium feel */
-::-webkit-scrollbar {
-  width: 0px;
-  background: transparent;
+.custom-leaflet-marker {
+  background: none !important;
+  border: none !important;
+}
+
+.gm-style .gm-style-iw-c {
+  padding: 0 !important;
+  border-radius: 16px !important;
+}
+
+/* ─── Range input ─── */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: #E5E7EB;
+  border-radius: 2px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #111827;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #111827;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+/* ─── Radio buttons ─── */
+input[type="radio"]:checked + div {
+  background: #F3F4F6;
+  color: #111827;
+  border-color: #111827;
 }
