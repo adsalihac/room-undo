@@ -39,7 +39,7 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect }: R
         <div className="flex items-center gap-2">
           <Link
             href="/admin/add-room"
-            className="inline-flex items-center gap-1.5 px-3.5 h-[34px] text-[12px] font-bold text-white rounded-lg shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
+            className="inline-flex items-center gap-1.5 px-4 h-[34px] text-[12px] font-bold text-white rounded-full shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
             style={{ backgroundColor: "#0F172A" }}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -47,7 +47,7 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect }: R
           </Link>
           <Link
             href="/login"
-            className="inline-flex items-center justify-center w-[34px] h-[34px] text-secondary-text rounded-lg hover:bg-accent-light hover:text-primary-text transition-colors border border-border-color/50"
+            className="inline-flex items-center justify-center w-[34px] h-[34px] text-secondary-text rounded-full hover:bg-accent-light hover:text-primary-text transition-colors border border-border-color/50"
             aria-label="Login"
           >
             <User className="w-3.5 h-3.5" />
@@ -63,7 +63,7 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect }: R
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search rooms..."
-            className="w-full pl-9 pr-3 h-[38px] rounded-xl border border-border-color bg-background text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
+            className="w-full pl-9 pr-3 h-[38px] rounded-full border border-border-color bg-background text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
           />
         </div>
         <div className="flex gap-1.5 overflow-x-auto pb-0.5">
@@ -71,7 +71,7 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect }: R
             <button
               key={type}
               onClick={() => setFilterType(type)}
-              className={`shrink-0 px-3 h-[30px] rounded-lg text-[11px] font-bold transition-all ${
+              className={`shrink-0 px-3 h-[30px] rounded-full text-[11px] font-bold transition-all ${
                 filterType === type
                   ? "text-white shadow-sm"
                   : "text-secondary-text bg-background border border-border-color hover:border-border-color hover:bg-accent-light"

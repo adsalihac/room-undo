@@ -125,7 +125,7 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
             <div className="border-t border-border-color p-4 flex gap-2.5 bg-accent-light/30">
               <a
                 href={`tel:${room.phone}`}
-                className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-xl text-[14px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
+                className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-full text-[14px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
                 style={{ backgroundColor: '#0F172A' }}
               >
                 <Phone className="w-4 h-4" />
@@ -135,7 +135,7 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
                 href={`https://wa.me/${room.whatsapp.replace(/\+/g, "").replace(/\s/g, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-xl text-[14px] font-bold text-primary-text border-2 border-border-color hover:bg-surface hover:border-accent/20 transition-all hover:-translate-y-0.5"
+                className="flex-1 flex items-center justify-center gap-2 h-[44px] rounded-full text-[14px] font-bold text-primary-text border-2 border-border-color hover:bg-surface hover:border-accent/20 transition-all hover:-translate-y-0.5"
               >
                 <MessageCircle className="w-4 h-4" />
                 WhatsApp

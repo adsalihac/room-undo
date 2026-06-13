@@ -54,7 +54,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="flex w-full items-center justify-center gap-3 h-[46px] rounded-xl border-2 border-border-color text-[14px] font-bold text-primary-text hover:bg-accent-light hover:border-accent/20 transition-all disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-3 h-[46px] rounded-full border-2 border-border-color text-[14px] font-bold text-primary-text hover:bg-accent-light hover:border-accent/20 transition-all disabled:opacity-50"
           >
             {isLoading ? (
               <div className="w-4 h-4 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />

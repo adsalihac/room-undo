@@ -30,7 +30,7 @@ export default function RoomCard({ room, isSelected, onClick }: RoomCardProps) {
               <span className="text-[12px] text-secondary-text truncate">{room.location_name}</span>
             </div>
           </div>
-          <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-semibold bg-accent-light text-secondary-text border border-border-color/50">
+          <span className="shrink-0 inline-flex items-center px-3 py-1 rounded-full text-[11px] font-semibold bg-accent-light text-secondary-text border border-border-color/50">
             {room.property_type}
           </span>
         </div>

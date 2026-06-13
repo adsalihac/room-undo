@@ -41,7 +41,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-bold transition-all ${
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-bold transition-all ${
                   isActive
                     ? "text-white shadow-sm"
                     : "text-secondary-text hover:text-primary-text hover:bg-accent-light"
@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-3 border-t border-border-color/70">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 px-3.5 py-2.5 rounded-xl text-[13px] font-bold text-secondary-text hover:text-error hover:bg-error-bg transition-all"
+            className="flex w-full items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-bold text-secondary-text hover:text-error hover:bg-error-bg transition-all"
           >
             <LogOut className="w-4 h-4" />
             Logout

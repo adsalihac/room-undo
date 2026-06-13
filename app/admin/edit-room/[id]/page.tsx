@@ -244,13 +244,13 @@ export default function EditRoom() {
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
-          <Link href="/admin/rooms" className="inline-flex items-center h-[44px] px-6 rounded-xl text-[14px] font-bold text-primary-text border-2 border-border-color hover:bg-accent-light transition-all">
+          <Link href="/admin/rooms" className="inline-flex items-center h-[44px] px-7 rounded-full text-[14px] font-bold text-primary-text border-2 border-border-color hover:bg-accent-light transition-all">
             Cancel
           </Link>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center gap-2 h-[44px] px-6 rounded-xl text-[14px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+            className="inline-flex items-center gap-2 h-[44px] px-7 rounded-full text-[14px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
             style={{ backgroundColor: "#0F172A" }}
           >
             {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}

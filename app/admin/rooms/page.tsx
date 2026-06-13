@@ -23,7 +23,7 @@ export default async function AdminRoomsPage() {
         </div>
         <Link
           href="/admin/add-room"
-          className="inline-flex items-center gap-1.5 h-[40px] px-5 rounded-xl text-[13px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
+          className="inline-flex items-center gap-1.5 h-[40px] px-6 rounded-full text-[13px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
           style={{ backgroundColor: "#0F172A" }}
         >
           <Plus className="w-4 h-4" />
@@ -79,7 +79,7 @@ export default async function AdminRoomsPage() {
                       <p className="text-[14px] font-bold text-primary-text">₹{room.price.toLocaleString("en-IN")}<span className="text-[12px] text-secondary-text font-normal">/mo</span></p>
                     </td>
                     <td className="py-4 px-5 align-middle">
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[11px] font-bold border ${
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border ${
                         room.available
                           ? "text-success bg-success-bg border-success/20"
                           : "text-secondary-text bg-accent-light border-border-color/50"
@@ -90,7 +90,7 @@ export default async function AdminRoomsPage() {
                     <td className="py-4 px-5 align-middle text-right">
                       <Link
                         href={`/admin/edit-room/${room.id}`}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[12px] font-bold text-secondary-text hover:text-primary-text hover:bg-accent-light rounded-xl transition-all"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[12px] font-bold text-secondary-text hover:text-primary-text hover:bg-accent-light rounded-full transition-all"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
                         Edit
