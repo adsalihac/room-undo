@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Search, Plus, User } from "lucide-react";
 import Link from "next/link";
 import RoomCard from "./RoomCard";
@@ -12,13 +12,40 @@ interface RoomListPanelProps {
   rooms: Room[];
   selectedRoomId: string | null;
   onRoomSelect: (room: Room) => void;
+  loading?: boolean;
 }
 
-export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect }: RoomListPanelProps) {
+function SkeletonCard() {
+  return (
+    <div className="w-full rounded-2xl border-2 border-border-color/50 bg-surface p-5 animate-pulse">
+      <div className="flex items-start justify-between gap-3 mb-3">
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="h-4 w-3/4 rounded-full bg-gray-200" />
+          <div className="h-3 w-1/2 rounded-full bg-gray-200" />
+        </div>
+        <div className="h-6 w-20 rounded-full bg-gray-200" />
+      </div>
+      <div className="flex items-end justify-between pt-3 border-t border-border-color/50">
+        <div className="space-y-1.5">
+          <div className="h-6 w-24 rounded bg-gray-200" />
+          <div className="h-3 w-8 rounded bg-gray-200" />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="w-2.5 h-2.5 rounded-full bg-gray-200" />
+          <div className="h-3 w-14 rounded bg-gray-200" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loading }: RoomListPanelProps) {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("All");
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
 
   const propertyTypes = ["All", ...new Set(rooms.map((r) => r.property_type))];
+  const maxPrice = useMemo(() => Math.max(...rooms.map((r) => r.price), 10000), [rooms]);
 
   const filtered = rooms.filter((room) => {
     const matchSearch =
@@ -26,7 +53,8 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect }: R
       room.title.toLowerCase().includes(search.toLowerCase()) ||
       room.location_name.toLowerCase().includes(search.toLowerCase());
     const matchType = filterType === "All" || room.property_type === filterType;
-    return matchSearch && matchType;
+    const matchPrice = room.price >= priceRange[0] && room.price <= priceRange[1];
+    return matchSearch && matchType && matchPrice;
   });
 
   return (
@@ -84,16 +112,68 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect }: R
         </div>
       </div>
 
+      {/* Price range */}
+      <div className="px-5 py-3 border-b border-border-color/30">
+        <div className="flex items-center justify-between mb-2.5">
+          <label className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider">
+            Price Range
+          </label>
+          <span className="text-[12px] font-bold text-secondary-text">
+            ₹{priceRange[0].toLocaleString("en-IN")} – ₹{priceRange[1].toLocaleString("en-IN")}
+          </span>
+        </div>
+        <div className="relative h-6">
+          <div
+            className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full w-full"
+            style={{ backgroundColor: "#EEEEEE" }}
+          />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full"
+            style={{
+              left: `${(priceRange[0] / maxPrice) * 100}%`,
+              width: `${((priceRange[1] - priceRange[0]) / maxPrice) * 100}%`,
+              backgroundColor: "#FF385C",
+            }}
+          />
+          <input
+            type="range"
+            min={0}
+            max={maxPrice}
+            step={1000}
+            value={priceRange[0]}
+            onChange={(e) =>
+              setPriceRange([Math.min(Number(e.target.value), priceRange[1] - 1000), priceRange[1]])
+            }
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+            style={{ pointerEvents: "auto" }}
+          />
+          <input
+            type="range"
+            min={0}
+            max={maxPrice}
+            step={1000}
+            value={priceRange[1]}
+            onChange={(e) =>
+              setPriceRange([priceRange[0], Math.max(Number(e.target.value), priceRange[0] + 1000)])
+            }
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+            style={{ pointerEvents: "auto" }}
+          />
+        </div>
+      </div>
+
       {/* Results count */}
       <div className="px-5 py-3 flex items-center justify-between border-b border-border-color/30">
         <p className="text-[12px] font-bold text-secondary-text">
-          {filtered.length} {filtered.length === 1 ? "room" : "rooms"} found
+          {loading ? "Loading..." : `${filtered.length} ${filtered.length === 1 ? "room" : "rooms"} found`}
         </p>
       </div>
 
       {/* List */}
       <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-        {filtered.length === 0 ? (
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} />)
+        ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <div className="w-16 h-16 rounded-2xl bg-accent-light flex items-center justify-center mb-4 shadow-sm">
               <Search className="w-6 h-6 text-accent" />

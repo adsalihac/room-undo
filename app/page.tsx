@@ -60,6 +60,7 @@ export default function Home() {
         images: (room.room_images || []).map((img: any) => img.image_url),
         amenities: [],
         reviews: [],
+        featured: room.featured ?? false,
       }));
       setRooms(mappedRooms);
       setLoading(false);
@@ -116,6 +117,7 @@ export default function Home() {
               rooms={rooms}
               selectedRoomId={selectedRoom?.id || null}
               onRoomSelect={handleRoomSelect}
+              loading={loading}
             />
           </div>
         }

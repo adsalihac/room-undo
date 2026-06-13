@@ -22,9 +22,18 @@ export default function RoomCard({ room, isSelected, onClick }: RoomCardProps) {
       <div className="p-5 sm:p-5">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="min-w-0 flex-1">
-            <h3 className="text-[16px] font-extrabold text-primary-text leading-tight truncate">
-              {room.title}
-            </h3>
+            <div className="flex items-center gap-2">
+              <h3 className="text-[16px] font-extrabold text-primary-text leading-tight truncate">
+                {room.title}
+              </h3>
+              {room.featured && (
+                <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-extrabold tracking-wide uppercase"
+                  style={{ backgroundColor: "#FFF2F4", color: "#FF385C", border: "1.5px solid rgba(255,56,92,0.25)" }}
+                >
+                  Featured
+                </span>
+              )}
+            </div>
             <div className="flex items-center gap-1 mt-1">
               <MapPin className="w-3 h-3 shrink-0 text-secondary-text" />
               <span className="text-[13px] text-secondary-text truncate font-medium">{room.location_name}</span>
