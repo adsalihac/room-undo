@@ -30,27 +30,15 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
   const [reviewSort, setReviewSort] = useState<"newest" | "highest" | "helpful">("newest");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  if (!room) return null;
-
-  const images = room.images.length > 0 ? room.images : room.image_url ? [room.image_url] : [];
-  const hasMultiple = images.length > 1;
-
-  const prevImage = () => setImgIndex((i) => (i === 0 ? images.length - 1 : i - 1));
-  const nextImage = () => setImgIndex((i) => (i === images.length - 1 ? 0 : i + 1));
-
-  const shareText = `🏠 *${room.title}*\n📍 ${room.location_name}\n💰 ₹${room.price.toLocaleString("en-IN")}/mo\n📋 ${room.property_type}\n\nCheck it out on RoomUndo!`;
-
-  const avgRating = room.reviews.length > 0
-    ? room.reviews.reduce((s, r) => s + r.rating, 0) / room.reviews.length
-    : 0;
-
   const breakdown = useMemo(() => {
+    if (!room) return { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     room.reviews.forEach((r) => { counts[r.rating] = (counts[r.rating] || 0) + 1; });
     return counts;
-  }, [room.reviews]);
+  }, [room?.reviews]);
 
   const sortedReviews = useMemo(() => {
+    if (!room) return [];
     const sorted = [...room.reviews];
     switch (reviewSort) {
       case "newest":
@@ -64,7 +52,21 @@ export default function RoomDetailDrawer({ room, onClose }: RoomDetailDrawerProp
         break;
     }
     return sorted;
-  }, [room.reviews, reviewSort]);
+  }, [room?.reviews, reviewSort]);
+
+  if (!room) return null;
+
+  const images = room.images.length > 0 ? room.images : room.image_url ? [room.image_url] : [];
+  const hasMultiple = images.length > 1;
+
+  const prevImage = () => setImgIndex((i) => (i === 0 ? images.length - 1 : i - 1));
+  const nextImage = () => setImgIndex((i) => (i === images.length - 1 ? 0 : i + 1));
+
+  const shareText = `🏠 *${room.title}*\n📍 ${room.location_name}\n💰 ₹${room.price.toLocaleString("en-IN")}/mo\n📋 ${room.property_type}\n\nCheck it out on RoomUndo!`;
+
+  const avgRating = room.reviews.length > 0
+    ? room.reviews.reduce((s, r) => s + r.rating, 0) / room.reviews.length
+    : 0;
 
   return (
     <>
