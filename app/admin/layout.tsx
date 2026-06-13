@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Home, List, PlusCircle, LogOut } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Logo from "@/components/Logo";
+import Footer from "@/components/Footer";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -52,9 +53,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      <main className="flex-1 overflow-y-auto p-8 md:p-10">
-        {children}
-      </main>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1 overflow-y-auto p-8 md:p-10">
+          {children}
+        </main>
+        <Footer />
+      </div>
     </div>
   );
 }
