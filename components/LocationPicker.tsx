@@ -39,8 +39,8 @@ export default function LocationPicker({ center, onCenterChange }: LocationPicke
       dragging={true}
     >
       <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+        url="https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png"
       />
       <CenterUpdater onCenterChange={onCenterChange} />
     </MapContainer>
