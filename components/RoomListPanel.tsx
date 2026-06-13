@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useCallback } from "react";
-import { Search, Plus, User, Heart, BarChart3, Clock, X } from "lucide-react";
+import { Search, Plus, User, Heart, BarChart3, Clock, X, ArrowUpDown } from "lucide-react";
 import Link from "next/link";
 import RoomCard from "./RoomCard";
 import Logo from "./Logo";
@@ -52,6 +52,7 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [savedRooms, setSavedRooms] = useState<string[]>([]);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<"newest" | "price-low" | "price-high" | "rating">("newest");
 
   const allTags = useMemo(() => {
     const tags = new Set<string>();
@@ -88,17 +89,17 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
 
   const savedRoomObjects = rooms.filter((room) => savedRooms.includes(room.id));
 
-  const displayRooms = showSavedRooms
-    ? savedRoomObjects.filter((room) =>
-        !search || room.title.toLowerCase().includes(search.toLowerCase()) || room.location_name.toLowerCase().includes(search.toLowerCase())
-      )
-    : rooms.filter((room) => {
-        const matchSearch = !search || room.title.toLowerCase().includes(search.toLowerCase()) || room.location_name.toLowerCase().includes(search.toLowerCase());
-        const matchType = filterType === "All" || room.property_type === filterType;
-        const matchTag = filterTag === "All" || (room.tags?.includes(filterTag) ?? false);
-        const matchPrice = room.price >= priceRange[0] && room.price <= priceRange[1];
-        return matchSearch && matchType && matchTag && matchPrice;
-      });
+  const roomRating = useMemo(() => {
+    const map: Record<string, number> = {};
+    rooms.forEach((r) => {
+      if (r.reviews.length > 0) {
+        map[r.id] = r.reviews.reduce((s, rev) => s + rev.rating, 0) / r.reviews.length;
+      } else {
+        map[r.id] = 0;
+      }
+    });
+    return map;
+  }, [rooms]);
 
   const filtered = rooms.filter((room) => {
     const matchSearch = !search || room.title.toLowerCase().includes(search.toLowerCase()) || room.location_name.toLowerCase().includes(search.toLowerCase());
@@ -107,6 +108,23 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
     const matchPrice = room.price >= priceRange[0] && room.price <= priceRange[1];
     return matchSearch && matchType && matchTag && matchPrice;
   });
+
+  const sortedFiltered = useMemo(() => {
+    const list = [...filtered];
+    switch (sortBy) {
+      case "price-low": list.sort((a, b) => a.price - b.price); break;
+      case "price-high": list.sort((a, b) => b.price - a.price); break;
+      case "rating": list.sort((a, b) => (roomRating[b.id] || 0) - (roomRating[a.id] || 0)); break;
+      default: list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    }
+    return list;
+  }, [filtered, sortBy, roomRating]);
+
+  const displayRooms = showSavedRooms
+    ? savedRoomObjects.filter((room) =>
+        !search || room.title.toLowerCase().includes(search.toLowerCase()) || room.location_name.toLowerCase().includes(search.toLowerCase())
+      )
+    : sortedFiltered;
 
   const handleSearchChange = (val: string) => {
     setSearch(val);
@@ -250,12 +268,21 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
         </div>
       </div>
 
-      {/* Results count */}
+      {/* Results count & sort */}
       <div className="px-5 py-3 flex items-center justify-between border-b border-border-color/30">
         <p className="text-[12px] font-bold text-secondary-text">
           {loading ? "Loading..." : `${filtered.length} ${filtered.length === 1 ? "room" : "rooms"} found`}
         </p>
         <div className="flex items-center gap-2">
+          <div className="relative">
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)} className="appearance-none pl-3 pr-7 h-[30px] rounded-full text-[11px] font-extrabold border-2 border-border-color bg-white cursor-pointer outline-none focus:border-accent/40 transition-all" style={{ color: "#717171" }}>
+              <option value="newest">Newest</option>
+              <option value="price-low">Price: Low</option>
+              <option value="price-high">Price: High</option>
+              <option value="rating">Rating</option>
+            </select>
+            <ArrowUpDown className="absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-secondary-text pointer-events-none" />
+          </div>
           {compareRooms.length >= 2 && (
             <button onClick={() => setShowCompareModal(true)} className="flex items-center gap-1.5 px-3 h-[30px] rounded-full text-[12px] font-extrabold text-white transition-all hover:shadow-md" style={{ backgroundColor: "#FF385C" }}>
               <BarChart3 className="w-3.5 h-3.5" /> Compare ({compareRooms.length})

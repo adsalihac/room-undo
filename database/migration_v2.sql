@@ -21,6 +21,19 @@ BEGIN
 END;
 $$;
 
+-- Create function to increment helpful count
+CREATE OR REPLACE FUNCTION increment_helpful(review_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE reviews
+  SET helpful = helpful + 1
+  WHERE id = review_id;
+END;
+$$;
+
 -- Review table additions (for new frontend features)
 ALTER TABLE reviews
   ADD COLUMN IF NOT EXISTS date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,

@@ -62,22 +62,25 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
   const [hasReviewed, setHasReviewed] = useState(false);
   const [existingReviewId, setExistingReviewId] = useState<string | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
+  const [serverReviews, setServerReviews] = useState<Room["reviews"]>([]);
 
   const showToast = useCallback((msg: string) => {
     setToastMsg(msg);
     setToastKey((k) => k + 1);
   }, []);
 
+  const allReviews = [...serverReviews, ...localReviews];
+
   const breakdown = useMemo(() => {
     if (!room) return { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    [...room.reviews, ...localReviews].forEach((r) => { counts[r.rating] = (counts[r.rating] || 0) + 1; });
+    allReviews.forEach((r) => { counts[r.rating] = (counts[r.rating] || 0) + 1; });
     return counts;
-  }, [room?.reviews, localReviews]);
+  }, [allReviews]);
 
   const sortedReviews = useMemo(() => {
     if (!room) return [];
-    const sorted = [...room.reviews, ...localReviews];
+    const sorted = [...allReviews];
     switch (reviewSort) {
       case "newest":
         sorted.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
@@ -85,12 +88,9 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
       case "highest":
         sorted.sort((a, b) => b.rating - a.rating);
         break;
-      case "helpful":
-        sorted.sort((a, b) => (b.helpful || 0) - (a.helpful || 0));
-        break;
     }
     return sorted;
-  }, [room?.reviews, reviewSort, localReviews]);
+  }, [allReviews, reviewSort]);
 
   const similarRooms = useMemo(() => {
     if (!room || allRooms.length === 0) return [];
@@ -131,6 +131,37 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
     checkAuth();
   }, [room?.id]);
 
+  // Fetch fresh reviews from server when drawer opens
+  useEffect(() => {
+    const roomId = room?.id;
+    if (!roomId) return;
+    async function fetchReviews() {
+      try {
+        const supabase = createClient();
+        const { data } = await supabase
+          .from("reviews")
+          .select("*")
+          .eq("room_id", roomId)
+          .order("created_at", { ascending: false });
+        if (data) {
+          setServerReviews(data.map((r: any) => ({
+            id: r.id,
+            username: r.username || "Anonymous",
+            rating: r.rating || 0,
+            comment: r.comment || "",
+            date: r.date || r.created_at || new Date().toISOString(),
+            verified: r.verified ?? true,
+            helpful: r.helpful ?? 0,
+            owner_reply: r.owner_reply || "",
+          })));
+        }
+      } catch {
+        // silently fail
+      }
+    }
+    fetchReviews();
+  }, [room?.id]);
+
   if (!room) return null;
 
   const images = room.images.length > 0 ? room.images : room.image_url ? [room.image_url] : [];
@@ -140,8 +171,6 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
   const nextImage = () => setImgIndex((i) => (i === images.length - 1 ? 0 : i + 1));
 
   const shareText = `🏠 *${room.title}*\n📍 ${room.location_name}\n💰 ₹${room.price.toLocaleString("en-IN")}/mo\n📋 ${room.property_type}\n\nCheck it out on RoomUndo!`;
-
-  const allReviews = [...room.reviews, ...localReviews];
 
   const avgRating = allReviews.length > 0
     ? allReviews.reduce((s, r) => s + r.rating, 0) / allReviews.length
@@ -327,7 +356,6 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
                       <select value={reviewSort} onChange={(e) => setReviewSort(e.target.value as "newest" | "highest" | "helpful")} className="appearance-none pl-3 pr-7 h-[34px] rounded-full text-[12px] font-extrabold border-2 border-border-color bg-white cursor-pointer outline-none focus:border-accent/40 transition-all" style={{ color: "#222222" }}>
                         <option value="newest">Newest</option>
                         <option value="highest">Highest Rated</option>
-                        <option value="helpful">Most Helpful</option>
                       </select>
                       <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-secondary-text pointer-events-none" />
                     </div>
@@ -372,15 +400,18 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
                           </div>
                         </div>
                         <p className="text-[13px] leading-relaxed font-semibold" style={{ color: "var(--color-secondary-text)" }}>{review.comment}</p>
+                        {review.owner_reply && (
+                          <div className="mt-2 ml-4 pl-3 border-l-2" style={{ borderColor: "#FF385C" }}>
+                            <p className="text-[11px] font-extrabold text-accent uppercase tracking-wider mb-0.5">Owner response</p>
+                            <p className="text-[12px] font-semibold" style={{ color: "var(--color-primary-text)" }}>{review.owner_reply}</p>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: "var(--color-border-color)" }}>
                           {review.date && (
                             <span className="text-[11px] font-bold" style={{ color: "var(--color-secondary-text)" }}>
                               {new Date(review.date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
                             </span>
                           )}
-                          <button onClick={() => showToast("Marked as helpful!")} className="flex items-center gap-1 text-[11px] font-bold hover:text-accent transition-colors" style={{ color: "var(--color-secondary-text)" }}>
-                            <ThumbsUp className="w-3 h-3" /> Helpful ({review.helpful || 0})
-                          </button>
                         </div>
                       </div>
                     ))}

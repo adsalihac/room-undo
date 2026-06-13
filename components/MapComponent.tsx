@@ -23,7 +23,7 @@ export interface Room {
   images: string[];
   amenities: string[];
   tags: string[];
-  reviews: { username: string; rating: number; comment: string; date?: string; verified?: boolean; helpful?: number }[];
+  reviews: { id?: string; username: string; rating: number; comment: string; date?: string; verified?: boolean; helpful?: number; owner_reply?: string }[];
   featured: boolean;
   created_at: string;
   views: number;

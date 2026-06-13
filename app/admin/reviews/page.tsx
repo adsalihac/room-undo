@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { Star, MessageSquareText } from "lucide-react";
 import { redirect } from "next/navigation";
 import DeleteReviewButton from "./delete-review";
+import ReplyToReview from "./reply-to-review";
 
 async function deleteReview(formData: FormData) {
   "use server";
@@ -39,6 +40,7 @@ export default async function AdminReviewsPage() {
                 <th className="py-4 px-5 font-extrabold text-[12px] text-secondary-text uppercase tracking-wider">Reviewer</th>
                 <th className="py-4 px-5 font-extrabold text-[12px] text-secondary-text uppercase tracking-wider">Rating</th>
                 <th className="py-4 px-5 font-extrabold text-[12px] text-secondary-text uppercase tracking-wider">Comment</th>
+                <th className="py-4 px-5 font-extrabold text-[12px] text-secondary-text uppercase tracking-wider">Reply</th>
                 <th className="py-4 px-5 font-extrabold text-[12px] text-secondary-text uppercase tracking-wider">Date</th>
                 <th className="py-4 px-5 font-extrabold text-[12px] text-secondary-text uppercase tracking-wider text-right">Actions</th>
               </tr>
@@ -46,7 +48,7 @@ export default async function AdminReviewsPage() {
             <tbody>
               {(!reviews || reviews.length === 0) ? (
                 <tr>
-                  <td colSpan={6} className="py-16 px-5 text-center">
+                  <td colSpan={7} className="py-16 px-5 text-center">
                     <div className="w-14 h-14 rounded-2xl bg-accent-light flex items-center justify-center mx-auto mb-3 shadow-sm">
                       <MessageSquareText className="w-6 h-6" style={{ color: "#FF385C" }} />
                     </div>
@@ -72,6 +74,9 @@ export default async function AdminReviewsPage() {
                     </td>
                     <td className="py-4 px-5 align-middle max-w-xs">
                       <p className="text-[13px] font-semibold text-secondary-text truncate">{review.comment}</p>
+                    </td>
+                    <td className="py-4 px-5 align-middle">
+                      <ReplyToReview reviewId={review.id} currentReply={review.owner_reply || ""} />
                     </td>
                     <td className="py-4 px-5 align-middle">
                       <span className="text-[12px] font-bold text-secondary-text whitespace-nowrap">

@@ -61,12 +61,14 @@ export default function Home() {
         amenities: room.amenities || [],
         tags: room.tags || [],
         reviews: room.reviews?.map((r: any) => ({
+          id: r.id,
           username: r.username || r.user_name || "Anonymous",
           rating: r.rating || 0,
           comment: r.comment || "",
           date: r.date || r.created_at || new Date().toISOString(),
           verified: r.verified ?? true,
           helpful: r.helpful ?? 0,
+          owner_reply: r.owner_reply || "",
         })) || [],
         featured: room.featured ?? false,
         created_at: room.created_at || new Date().toISOString(),
@@ -74,6 +76,17 @@ export default function Home() {
       }));
       setRooms(mappedRooms);
       setLoading(false);
+
+      // URL deep linking — auto-open room from ?room=X
+      const params = new URLSearchParams(window.location.search);
+      const roomId = params.get("room");
+      if (roomId) {
+        const match = mappedRooms.find((r) => r.id === roomId);
+        if (match) {
+          setSelectedRoom(match);
+          void supabase.rpc("increment_room_views", { room_id: match.id });
+        }
+      }
     };
 
     fetchRooms();

@@ -31,7 +31,7 @@ export default function Toast({ message, visible, onClose, duration = 2500 }: To
         "fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] flex items-center gap-2.5 px-5 py-3 rounded-2xl shadow-2xl border border-border-color/50 transition-all duration-300",
         show ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
       )}
-      style={{ backgroundColor: "var(--color-surface-raised, #222)", color: "#FFFFFF" }}
+      style={{ backgroundColor: "#222222", color: "#FFFFFF" }}
     >
       <CheckCircle className="w-4.5 h-4.5 shrink-0" style={{ color: "#00A699" }} />
       <span className="text-[14px] font-extrabold">{message}</span>

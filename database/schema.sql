@@ -63,6 +63,19 @@ BEGIN
 END;
 $$;
 
+-- Function to increment helpful count on reviews
+CREATE OR REPLACE FUNCTION increment_helpful(review_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE reviews
+  SET helpful = helpful + 1
+  WHERE id = review_id;
+END;
+$$;
+
 -- Setup Row Level Security (RLS)
 ALTER TABLE rooms ENABLE ROW LEVEL SECURITY;
 ALTER TABLE room_images ENABLE ROW LEVEL SECURITY;
