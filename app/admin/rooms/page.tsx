@@ -1,6 +1,16 @@
 import { createClient } from "@/utils/supabase/server";
-import { Plus, Edit2 } from "lucide-react";
+import { Plus, Edit2, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import DeleteRoomButton from "./delete-room";
+
+async function deleteRoom(formData: FormData) {
+  "use server";
+  const id = formData.get("id") as string;
+  const supabase = await createClient();
+  await supabase.from("rooms").delete().eq("id", id);
+  redirect("/admin/rooms");
+}
 
 export default async function AdminRoomsPage() {
   const supabase = await createClient();
@@ -88,13 +98,16 @@ export default async function AdminRoomsPage() {
                       </span>
                     </td>
                     <td className="py-4 px-5 align-middle text-right">
-                      <Link
-                        href={`/admin/edit-room/${room.id}`}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[12px] font-bold text-secondary-text hover:text-primary-text hover:bg-accent-light rounded-full transition-all"
-                      >
-                        <Edit2 className="w-3.5 h-3.5" />
-                        Edit
-                      </Link>
+                      <div className="flex items-center justify-end gap-1">
+                        <Link
+                          href={`/admin/edit-room/${room.id}`}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[12px] font-bold text-secondary-text hover:text-primary-text hover:bg-accent-light rounded-full transition-all"
+                        >
+                          <Edit2 className="w-3.5 h-3.5" />
+                          Edit
+                        </Link>
+                        <DeleteRoomButton id={room.id} deleteAction={deleteRoom} />
+                      </div>
                     </td>
                   </tr>
                 ))
