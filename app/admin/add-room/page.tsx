@@ -61,50 +61,53 @@ export default function AddRoom() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto pb-16">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-primary-text">Add Room</h1>
-        <p className="text-[13px] text-secondary-text mt-0.5">Fill in the details to list a new property.</p>
+    <div className="max-w-3xl mx-auto pb-20">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-primary-text">Add Room</h1>
+        <p className="text-[14px] text-secondary-text mt-0.5">Fill in the details to list a new property.</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-        <div className="bg-surface p-5 rounded-lg border border-border-color space-y-4">
-          <h2 className="text-[13px] font-semibold text-primary-text">Basic Information</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="bg-surface p-6 rounded-xl border border-border-color/70 shadow-sm space-y-5">
+          <div className="flex items-center gap-2 pb-1 border-b border-border-color/50">
+            <div className="w-1.5 h-1.5 rounded-full bg-accent" />
+            <h2 className="text-[13px] font-bold text-primary-text uppercase tracking-wider">Basic Information</h2>
+          </div>
 
           <div>
-            <label className="block text-[12px] font-medium text-primary-text mb-1">Title</label>
+            <label className="block text-[13px] font-bold text-primary-text mb-1.5">Title</label>
             <input
               {...register("title")}
               placeholder="e.g. Premium 1BHK near Technopark"
-              className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
             />
-            {errors.title && <p className="text-error text-[11px] mt-1">{errors.title.message as string}</p>}
+            {errors.title && <p className="text-error text-[12px] font-medium mt-1">{errors.title.message as string}</p>}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[12px] font-medium text-primary-text mb-1">Monthly Rent (₹)</label>
+              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Monthly Rent (₹)</label>
               <input
                 type="number"
                 {...register("price", { valueAsNumber: true })}
                 placeholder="0"
-                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
               />
             </div>
             <div>
-              <label className="block text-[12px] font-medium text-primary-text mb-1">Deposit (₹)</label>
+              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Deposit (₹)</label>
               <input
                 type="number"
                 {...register("deposit", { valueAsNumber: true })}
                 placeholder="0"
-                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
               />
             </div>
             <div>
-              <label className="block text-[12px] font-medium text-primary-text mb-1">Property Type</label>
+              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Property Type</label>
               <select
                 {...register("property_type")}
-                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text outline-none focus:border-accent/30 transition-colors bg-surface"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all bg-surface"
               >
                 <option value="Shared Room">Shared Room</option>
                 <option value="Private Room">Private Room</option>
@@ -114,10 +117,10 @@ export default function AddRoom() {
               </select>
             </div>
             <div>
-              <label className="block text-[12px] font-medium text-primary-text mb-1">Gender Preference</label>
+              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Gender Preference</label>
               <select
                 {...register("gender_preference")}
-                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text outline-none focus:border-accent/30 transition-colors bg-surface"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all bg-surface"
               >
                 <option value="Any">Any</option>
                 <option value="Male">Male</option>
@@ -127,86 +130,90 @@ export default function AddRoom() {
           </div>
 
           <div>
-            <label className="block text-[12px] font-medium text-primary-text mb-1">Description</label>
+            <label className="block text-[13px] font-bold text-primary-text mb-1.5">Description</label>
             <textarea
               {...register("description")}
               rows={4}
               placeholder="Describe the property, surroundings, and house rules..."
-              className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors resize-none"
+              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all resize-none"
             />
-            {errors.description && <p className="text-error text-[11px] mt-1">{errors.description.message as string}</p>}
+            {errors.description && <p className="text-error text-[12px] font-medium mt-1">{errors.description.message as string}</p>}
           </div>
         </div>
 
-        <div className="bg-surface p-5 rounded-lg border border-border-color space-y-4">
-          <h2 className="text-[13px] font-semibold text-primary-text flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-secondary-text" />
-            Location
-          </h2>
+        <div className="bg-surface p-6 rounded-xl border border-border-color/70 shadow-sm space-y-5">
+          <div className="flex items-center gap-2 pb-1 border-b border-border-color/50">
+            <div className="w-1.5 h-1.5 rounded-full bg-accent-warm" />
+            <h2 className="text-[13px] font-bold text-primary-text uppercase tracking-wider">Location</h2>
+          </div>
 
           <div>
-            <label className="block text-[12px] font-medium text-primary-text mb-1">Location Name / Area</label>
+            <label className="block text-[13px] font-bold text-primary-text mb-1.5">Location Name / Area</label>
             <input
               {...register("location_name")}
               placeholder="e.g. Kazhakkoottam, Trivandrum"
-              className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
             />
-            {errors.location_name && <p className="text-error text-[11px] mt-1">{errors.location_name.message as string}</p>}
+            {errors.location_name && <p className="text-error text-[12px] font-medium mt-1">{errors.location_name.message as string}</p>}
           </div>
 
           <div>
-            <label className="block text-[12px] font-medium text-primary-text mb-1.5">Pin Location on Map</label>
-            <div className="w-full h-64 bg-gray-100 rounded-lg overflow-hidden border border-border-color relative">
+            <label className="block text-[13px] font-bold text-primary-text mb-2">Pin Location on Map</label>
+            <div className="w-full h-72 bg-accent-light rounded-xl overflow-hidden border-2 border-border-color relative">
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                <MapPin className="w-6 h-6 text-primary-text -mt-6 drop-shadow-sm" />
+                <MapPin className="w-7 h-7 text-accent -mt-7 drop-shadow-lg" />
               </div>
-              <LocationPicker
-                center={coordinates}
-                onCenterChange={(c) => setCoordinates(c)}
-              />
+              <LocationPicker center={coordinates} onCenterChange={(c) => setCoordinates(c)} />
             </div>
-            <p className="text-[11px] text-secondary-text mt-1">Drag the map to place the pin.</p>
+            <p className="text-[12px] text-secondary-text mt-1.5 font-medium">Drag the map to place the pin at the property location.</p>
           </div>
         </div>
 
-        <div className="bg-surface p-5 rounded-lg border border-border-color space-y-4">
-          <h2 className="text-[13px] font-semibold text-primary-text">Contact Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-surface p-6 rounded-xl border border-border-color/70 shadow-sm space-y-5">
+          <div className="flex items-center gap-2 pb-1 border-b border-border-color/50">
+            <div className="w-1.5 h-1.5 rounded-full bg-success" />
+            <h2 className="text-[13px] font-bold text-primary-text uppercase tracking-wider">Contact Details</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
-              <label className="block text-[12px] font-medium text-primary-text mb-1">Owner Name</label>
+              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Owner Name</label>
               <input
                 {...register("owner_name")}
-                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+                placeholder="Owner name"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
               />
             </div>
             <div>
-              <label className="block text-[12px] font-medium text-primary-text mb-1">Phone</label>
+              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Phone</label>
               <input
                 {...register("phone")}
-                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+                placeholder="Phone number"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
               />
             </div>
             <div>
-              <label className="block text-[12px] font-medium text-primary-text mb-1">WhatsApp</label>
+              <label className="block text-[13px] font-bold text-primary-text mb-1.5">WhatsApp</label>
               <input
                 {...register("whatsapp")}
-                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+                placeholder="WhatsApp number"
+                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-1">
-          <button type="button" className="h-[38px] px-4 rounded-lg text-[13px] font-medium text-primary-text border border-border-color hover:bg-gray-50 transition-colors">
+        <div className="flex justify-end gap-3 pt-2">
+          <button type="button" className="h-[44px] px-6 rounded-xl text-[14px] font-bold text-primary-text border-2 border-border-color hover:bg-accent-light transition-all">
             Cancel
           </button>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center gap-1.5 h-[38px] px-4 rounded-lg text-[13px] font-medium text-white disabled:opacity-50 transition-colors hover:bg-accent-hover"
-            style={{ backgroundColor: '#0F172A' }}
+            className="inline-flex items-center gap-2 h-[44px] px-6 rounded-xl text-[14px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
+            style={{ backgroundColor: "#0F172A" }}
           >
-            {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
+            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
             Publish Room
           </button>
         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
 
@@ -36,20 +36,20 @@ const createCustomIcon = (room: Room, isSelected: boolean) => {
   const formattedPrice = `₹${room.price.toLocaleString("en-IN")}`;
 
   const html = `
-    <div style="transition: all 200ms ease; transform: ${isSelected ? 'scale(1.1)' : 'scale(1)'};">
+    <div style="transition: all 250ms cubic-bezier(0.4, 0, 0.2, 1); transform: ${isSelected ? 'scale(1.15)' : 'scale(1)'};">
       <div style="
         background: ${isSelected ? '#0F172A' : 'white'};
-        border-radius: 8px;
-        padding: 6px 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        border: 1px solid ${isSelected ? '#0F172A' : '#E5E7EB'};
-        transition: all 200ms ease;
-        font-family: var(--font-geist-sans), system-ui, sans-serif;
+        border-radius: 12px;
+        padding: 8px 16px;
+        box-shadow: ${isSelected ? '0 8px 24px rgba(0,0,0,0.2)' : '0 4px 12px rgba(0,0,0,0.08)'};
+        border: 2px solid ${isSelected ? '#0F172A' : '#E2E8F0'};
+        font-family: var(--font-sans, 'Plus Jakarta Sans', system-ui, sans-serif);
+        cursor: pointer;
       ">
-        <div style="font-weight: 700; font-size: 12px; color: ${isSelected ? 'white' : '#111827'}; white-space: nowrap; letter-spacing: -0.01em;">
+        <div style="font-weight: 800; font-size: 13px; color: ${isSelected ? 'white' : '#0F172A'}; white-space: nowrap; letter-spacing: -0.02em;">
           ${formattedPrice}
         </div>
-        <div style="font-weight: 500; font-size: 10px; color: ${isSelected ? 'rgba(255,255,255,0.7)' : '#6B7280'}; white-space: nowrap; margin-top: 1px;">
+        <div style="font-weight: 600; font-size: 10px; color: ${isSelected ? 'rgba(255,255,255,0.7)' : '#64748B'}; white-space: nowrap; margin-top: 2px; letter-spacing: 0.02em;">
           ${room.property_type}
         </div>
       </div>
@@ -59,8 +59,8 @@ const createCustomIcon = (room: Room, isSelected: boolean) => {
   return L.divIcon({
     html,
     className: 'custom-leaflet-marker',
-    iconSize: [100, 50],
-    iconAnchor: [50, 25],
+    iconSize: [100, 56],
+    iconAnchor: [50, 28],
   });
 };
 
@@ -76,24 +76,19 @@ function MapEventHandler({ onMapClick }: { onMapClick: () => void }) {
 }
 
 export default function MapComponent({ rooms, onRoomSelect, center: propCenter, zoom: propZoom }: MapComponentProps) {
-  const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
-
   const center: L.LatLngExpression = propCenter || [10.8505, 76.2711];
   const zoom = propZoom ?? 8;
 
   const handleRoomClick = (room: Room) => {
-    setSelectedRoomId(room.id);
     onRoomSelect(room);
   };
 
-  const handleMapClick = () => {
-    setSelectedRoomId(null);
-  };
+  const handleMapClick = () => {};
 
   return (
-    <MapContainer 
-      center={center} 
-      zoom={zoom} 
+    <MapContainer
+      center={center}
+      zoom={zoom}
       zoomControl={false}
       className="w-full h-full"
     >
@@ -102,12 +97,12 @@ export default function MapComponent({ rooms, onRoomSelect, center: propCenter, 
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       <MapEventHandler onMapClick={handleMapClick} />
-      
+
       {rooms.map((room) => (
         <Marker
           key={room.id}
           position={[room.latitude, room.longitude]}
-          icon={createCustomIcon(room, selectedRoomId === room.id)}
+          icon={createCustomIcon(room, false)}
           eventHandlers={{
             click: (e) => {
               L.DomEvent.stopPropagation(e);

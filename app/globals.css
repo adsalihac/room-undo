@@ -2,14 +2,16 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme inline {
-  --color-background: #FAFAFA;
+  --color-background: #F7F8FA;
   --color-surface: #FFFFFF;
-  --color-primary-text: #111827;
-  --color-secondary-text: #6B7280;
-  --color-border-color: #E5E7EB;
+  --color-primary-text: #0F172A;
+  --color-secondary-text: #64748B;
+  --color-border-color: #E2E8F0;
   --color-accent: #0F172A;
   --color-accent-hover: #1E293B;
   --color-accent-light: #F1F5F9;
+  --color-accent-warm: #D97706;
+  --color-accent-warm-bg: #FFFBEB;
   --color-error: #DC2626;
   --color-error-bg: #FEF2F2;
   --color-success: #059669;
@@ -17,7 +19,7 @@
   --color-warning: #D97706;
   --color-warning-bg: #FFFBEB;
 
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-sans, "Plus Jakarta Sans", system-ui, sans-serif);
 }
 
 /* ─── Scrollbar ─── */
@@ -26,7 +28,7 @@
   background: transparent;
 }
 
-/* ─── Focus ring utility ─── */
+/* ─── Focus ring ─── */
 *:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
@@ -38,7 +40,7 @@
   width: 100%;
   height: 100%;
   z-index: 0;
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 .custom-leaflet-marker {
@@ -46,24 +48,24 @@
   border: none !important;
 }
 
-/* ─── Input/Select base ─── */
+/* ─── Inputs ─── */
 input,
 select,
 textarea {
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-sans);
 }
 
 input::placeholder,
 textarea::placeholder {
-  color: #9CA3AF;
+  color: #94A3B8;
 }
 
-/* ─── Input range ─── */
+/* ─── Range ─── */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   height: 4px;
-  background: #E5E7EB;
+  background: #E2E8F0;
   border-radius: 2px;
   outline: none;
 }
@@ -87,7 +89,7 @@ input[type="range"]::-moz-range-thumb {
   border: none;
 }
 
-/* ─── Checkbox base ─── */
+/* ─── Checkbox ─── */
 input[type="checkbox"] {
   accent-color: var(--color-accent);
 }
@@ -97,4 +99,16 @@ input[type="radio"]:checked + div {
   background: var(--color-accent-light);
   color: var(--color-primary-text);
   border-color: var(--color-accent);
+}
+
+/* ─── Skeleton pulse ─── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }

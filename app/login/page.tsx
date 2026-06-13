@@ -30,23 +30,23 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-full flex flex-col justify-center py-12 px-4 bg-background h-full w-full">
-      <div className="absolute top-5 left-5">
-        <Link href="/" className="flex items-center gap-1.5 text-[12px] text-secondary-text hover:text-primary-text transition-colors font-medium">
-          <ArrowLeft className="w-3.5 h-3.5" />
+      <div className="absolute top-6 left-6">
+        <Link href="/" className="flex items-center gap-1.5 text-[13px] font-bold text-secondary-text hover:text-primary-text transition-colors">
+          <ArrowLeft className="w-4 h-4" />
           Back to Map
         </Link>
       </div>
 
       <div className="w-full max-w-sm mx-auto">
-        <div className="flex flex-col items-center mb-8">
-          <Logo size={36} showWordmark={false} />
-          <h2 className="mt-4 text-xl font-bold text-primary-text">Login</h2>
-          <p className="mt-1 text-[13px] text-secondary-text">Sign in to access the dashboard.</p>
+        <div className="flex flex-col items-center mb-10">
+          <Logo size={44} showWordmark={false} />
+          <h2 className="mt-5 text-2xl font-extrabold text-primary-text">Welcome back</h2>
+          <p className="mt-1.5 text-[14px] text-secondary-text">Sign in to access the admin panel.</p>
         </div>
 
-        <div className="bg-surface p-6 rounded-lg border border-border-color">
+        <div className="bg-surface p-7 rounded-xl border border-border-color/70 shadow-sm">
           {error && (
-            <div className="mb-4 text-[12px] text-error bg-error-bg border border-error/10 rounded-lg px-3 py-2">
+            <div className="mb-4 text-[12px] font-medium text-error bg-error-bg border border-error/10 rounded-lg px-3.5 py-2.5">
               {error}
             </div>
           )}
@@ -54,13 +54,13 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="flex w-full items-center justify-center gap-2.5 h-[42px] rounded-lg border border-border-color text-[13px] font-medium text-primary-text hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-3 h-[46px] rounded-xl border-2 border-border-color text-[14px] font-bold text-primary-text hover:bg-accent-light hover:border-accent/20 transition-all disabled:opacity-50"
           >
             {isLoading ? (
-              <div className="w-4 h-4 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
+              <div className="w-4 h-4 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />
             ) : (
               <>
-                <svg className="w-4 h-4" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
                   <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
                   <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>

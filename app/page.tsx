@@ -12,9 +12,9 @@ const MapComponent = dynamic(() => import("@/components/MapComponent"), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-2">
-        <div className="w-5 h-5 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
-        <p className="text-[13px] text-secondary-text">Loading map...</p>
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-7 h-7 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />
+        <p className="text-[14px] font-semibold text-secondary-text">Loading map...</p>
       </div>
     </div>
   ),
@@ -86,9 +86,9 @@ export default function Home() {
     return (
       <main className="relative w-full h-full overflow-hidden bg-background">
         <div className="w-full h-full flex items-center justify-center">
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-5 h-5 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
-            <p className="text-[13px] text-secondary-text">Loading rooms...</p>
+          <div className="flex flex-col items-center gap-3">
+            <div className="w-7 h-7 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />
+            <p className="text-[14px] font-semibold text-secondary-text">Loading rooms...</p>
           </div>
         </div>
       </main>
@@ -101,26 +101,22 @@ export default function Home() {
         orientation="horizontal"
         defaultRatio={0.65}
         first={
-          <div className="w-full h-full p-2">
-            <div className="w-full h-full rounded-lg overflow-hidden border border-border-color">
-              <MapComponent
-                rooms={rooms}
-                onRoomSelect={handleRoomSelect}
-                center={userLocation ? [userLocation.lat, userLocation.lng] : undefined}
-                zoom={userLocation ? 14 : undefined}
-              />
-            </div>
+          <div className="w-full h-full">
+            <MapComponent
+              rooms={rooms}
+              onRoomSelect={handleRoomSelect}
+              center={userLocation ? [userLocation.lat, userLocation.lng] : undefined}
+              zoom={userLocation ? 14 : undefined}
+            />
           </div>
         }
         second={
-          <div className="w-full h-full p-2 pr-3">
-            <div className="w-full h-full rounded-lg overflow-hidden border border-border-color bg-surface">
-              <RoomListPanel
-                rooms={rooms}
-                selectedRoomId={selectedRoom?.id || null}
-                onRoomSelect={handleRoomSelect}
-              />
-            </div>
+          <div className="w-full h-full">
+            <RoomListPanel
+              rooms={rooms}
+              selectedRoomId={selectedRoom?.id || null}
+              onRoomSelect={handleRoomSelect}
+            />
           </div>
         }
       />

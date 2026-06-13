@@ -15,7 +15,7 @@ export default function Logo({ showWordmark = true, size = 32, className = "" }:
         xmlns="http://www.w3.org/2000/svg"
         style={{ flexShrink: 0 }}
       >
-        <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="#0F172A" stroke="#0F172A" strokeWidth="0.5" />
+        <rect x="0.5" y="0.5" width="31" height="31" rx="8" fill="#0F172A" />
         <path
           d="M7 26 L7 7 L26 7"
           stroke="white"
@@ -40,8 +40,8 @@ export default function Logo({ showWordmark = true, size = 32, className = "" }:
       </svg>
 
       {showWordmark && (
-        <span className="text-[15px] font-semibold text-primary-text tracking-tight">
-          Room<span className="font-normal">Undo</span>
+        <span className="text-[16px] font-bold text-primary-text tracking-tight">
+          Room<span className="font-semibold text-accent-warm">Undo</span>
         </span>
       )}
     </div>
