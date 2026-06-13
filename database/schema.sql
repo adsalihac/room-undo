@@ -39,13 +39,15 @@ CREATE TABLE room_images (
 CREATE TABLE reviews (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   room_id UUID REFERENCES rooms(id) ON DELETE CASCADE NOT NULL,
+  user_id UUID REFERENCES auth.users(id),
   username TEXT NOT NULL,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   comment TEXT NOT NULL,
   date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   verified BOOLEAN DEFAULT true NOT NULL,
   helpful INTEGER DEFAULT 0 NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(room_id, user_id)
 );
 
 -- Function to increment room views
@@ -75,8 +77,8 @@ CREATE POLICY "Public read access to reviews" ON reviews FOR SELECT USING (true)
 CREATE POLICY "Admin full access to rooms" ON rooms FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Admin full access to room_images" ON room_images FOR ALL USING (auth.role() = 'authenticated');
 
--- Allow public to insert reviews
-CREATE POLICY "Public insert access to reviews" ON reviews FOR INSERT WITH CHECK (true);
+-- Allow authenticated users to insert reviews
+CREATE POLICY "Authenticated users can insert reviews" ON reviews FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
 -- Create storage bucket for room images
 INSERT INTO storage.buckets (id, name, public) VALUES ('room_images', 'room_images', true);

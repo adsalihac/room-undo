@@ -32,7 +32,7 @@ export default function Home() {
     const fetchRooms = async () => {
       const { data, error } = await supabase
         .from("rooms")
-        .select("*, room_images(image_url)")
+        .select("*, room_images(image_url), reviews(*)")
         .order("created_at", { ascending: false });
 
       if (error) {

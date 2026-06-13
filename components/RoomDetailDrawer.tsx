@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useRef, useMemo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import {
   X, MapPin, Phone, MessageCircle, Star, Share2,
   ChevronLeft, ChevronRight, Eye, EyeOff, ThumbsUp, Flag,
-  CheckCircle, ArrowUpDown, Copy, Maximize2, Calculator,
+  CheckCircle, ArrowUpDown, Copy, Maximize2,
   Clock, ShieldAlert, ExternalLink
 } from "lucide-react";
 import clsx from "clsx";
+import { createClient } from "@/utils/supabase/client";
 import RoomCard from "./RoomCard";
 import Toast from "./Toast";
 import ReportModal from "./ReportModal";
@@ -51,9 +52,16 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
   const [reviewSort, setReviewSort] = useState<"newest" | "highest" | "helpful">("newest");
   const [toastMsg, setToastMsg] = useState("");
   const [toastKey, setToastKey] = useState(0);
-  const [advance, setAdvance] = useState(5000);
-  const [brokerage, setBrokerage] = useState(3000);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewComment, setReviewComment] = useState("");
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [localReviews, setLocalReviews] = useState<Room["reviews"]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState("");
+  const [hasReviewed, setHasReviewed] = useState(false);
+  const [existingReviewId, setExistingReviewId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
 
   const showToast = useCallback((msg: string) => {
     setToastMsg(msg);
@@ -63,13 +71,13 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
   const breakdown = useMemo(() => {
     if (!room) return { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    room.reviews.forEach((r) => { counts[r.rating] = (counts[r.rating] || 0) + 1; });
+    [...room.reviews, ...localReviews].forEach((r) => { counts[r.rating] = (counts[r.rating] || 0) + 1; });
     return counts;
-  }, [room?.reviews]);
+  }, [room?.reviews, localReviews]);
 
   const sortedReviews = useMemo(() => {
     if (!room) return [];
-    const sorted = [...room.reviews];
+    const sorted = [...room.reviews, ...localReviews];
     switch (reviewSort) {
       case "newest":
         sorted.sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
@@ -82,7 +90,7 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
         break;
     }
     return sorted;
-  }, [room?.reviews, reviewSort]);
+  }, [room?.reviews, reviewSort, localReviews]);
 
   const similarRooms = useMemo(() => {
     if (!room || allRooms.length === 0) return [];
@@ -90,6 +98,38 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
       .filter((r) => r.id !== room.id && (r.location_name === room.location_name || Math.abs(r.price - room.price) / room.price < 0.3))
       .slice(0, 3);
   }, [room, allRooms]);
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const supabase = createClient();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          setUserId(user.id);
+          setUserName(user.user_metadata?.full_name || user.email?.split("@")[0] || "Guest");
+          if (room) {
+            const { data: existing } = await supabase
+              .from("reviews")
+              .select("id, rating, comment")
+              .eq("room_id", room.id)
+              .eq("user_id", user.id)
+              .maybeSingle();
+            if (existing) {
+              setExistingReviewId(existing.id);
+              setReviewRating(existing.rating);
+              setReviewComment(existing.comment);
+              setHasReviewed(true);
+            }
+          }
+        }
+      } catch {
+        // not authenticated
+      } finally {
+        setAuthChecked(true);
+      }
+    }
+    checkAuth();
+  }, [room?.id]);
 
   if (!room) return null;
 
@@ -101,16 +141,46 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
 
   const shareText = `🏠 *${room.title}*\n📍 ${room.location_name}\n💰 ₹${room.price.toLocaleString("en-IN")}/mo\n📋 ${room.property_type}\n\nCheck it out on RoomUndo!`;
 
-  const avgRating = room.reviews.length > 0
-    ? room.reviews.reduce((s, r) => s + r.rating, 0) / room.reviews.length
+  const allReviews = [...room.reviews, ...localReviews];
+
+  const avgRating = allReviews.length > 0
+    ? allReviews.reduce((s, r) => s + r.rating, 0) / allReviews.length
     : 0;
 
-  const totalMoveIn = room.deposit + advance + brokerage;
   const ageBadge = getAgeBadge(room.created_at);
 
   const handleCopyLink = () => {
     const url = `${window.location.origin}/?room=${room.id}`;
     navigator.clipboard.writeText(url).then(() => showToast("Link copied to clipboard!")).catch(() => showToast("Failed to copy link"));
+  };
+
+  const handleSubmitReview = async () => {
+    if (!userName.trim() || reviewRating === 0 || !reviewComment.trim()) return;
+    setSubmittingReview(true);
+    try {
+      const supabase = createClient();
+      if (existingReviewId) {
+        const { error } = await supabase.from("reviews").update({ rating: reviewRating, comment: reviewComment.trim() }).eq("id", existingReviewId);
+        if (error) throw error;
+        showToast("Review updated!");
+      } else {
+        const { error } = await supabase.from("reviews").insert({
+          room_id: room.id,
+          user_id: userId,
+          username: userName.trim(),
+          rating: reviewRating,
+          comment: reviewComment.trim(),
+        });
+        if (error) throw error;
+        setLocalReviews((prev) => [...prev, { username: userName.trim(), rating: reviewRating, comment: reviewComment.trim(), date: new Date().toISOString(), verified: true, helpful: 0 }]);
+        setHasReviewed(true);
+        showToast("Review submitted! Thanks for your feedback.");
+      }
+    } catch {
+      showToast("Failed to submit review. Please try again.");
+    } finally {
+      setSubmittingReview(false);
+    }
   };
 
   return (
@@ -235,87 +305,128 @@ export default function RoomDetailDrawer({ room, onClose, allRooms = [] }: RoomD
             )}
 
             {/* Reviews */}
-            {room.reviews.length > 0 && (
-              <section>
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider mb-2">Reviews</h3>
-                    <div className="flex items-center gap-3">
-                      <span className="text-3xl font-extrabold text-primary-text">{avgRating.toFixed(1)}</span>
-                      <div>
-                        <div className="flex gap-0.5">
-                          {[1, 2, 3, 4, 5].map((star) => (
-                            <Star key={star} className="w-4 h-4" style={{ color: star <= Math.round(avgRating) ? "#FF9600" : "#DDD", fill: star <= Math.round(avgRating) ? "#FF9600" : "transparent" }} />
-                          ))}
-                        </div>
-                        <span className="text-[12px] font-bold text-secondary-text">{room.reviews.length} {room.reviews.length === 1 ? "review" : "reviews"}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="relative">
-                    <select value={reviewSort} onChange={(e) => setReviewSort(e.target.value as "newest" | "highest" | "helpful")} className="appearance-none pl-3 pr-7 h-[34px] rounded-full text-[12px] font-extrabold border-2 border-border-color bg-white cursor-pointer outline-none focus:border-accent/40 transition-all" style={{ color: "#222222" }}>
-                      <option value="newest">Newest</option>
-                      <option value="highest">Highest Rated</option>
-                      <option value="helpful">Most Helpful</option>
-                    </select>
-                    <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-secondary-text pointer-events-none" />
-                  </div>
-                </div>
-                <div className="mb-4 space-y-1.5">
-                  {[5, 4, 3, 2, 1].map((star) => {
-                    const count = breakdown[star];
-                    const pct = room.reviews.length > 0 ? (count / room.reviews.length) * 100 : 0;
-                    return (
-                      <div key={star} className="flex items-center gap-2">
-                        <span className="text-[12px] font-bold text-secondary-text w-4 text-right">{star}</span>
-                        <Star className="w-3 h-3" style={{ color: "#FF9600", fill: "#FF9600" }} />
-                        <div className="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
-                          <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: "#FF9600" }} />
-                        </div>
-                        <span className="text-[11px] font-bold text-secondary-text w-8 text-right">{count}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <div className="space-y-2.5">
-                  {sortedReviews.map((review, index) => (
-                    <div key={index} className="p-4 rounded-2xl border-2" style={{ borderColor: "var(--color-border-color)", backgroundColor: "var(--color-background)" }}>
-                      <div className="flex items-center justify-between mb-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="text-[14px] font-extrabold" style={{ color: "var(--color-primary-text)" }}>{review.username}</span>
-                          {review.verified && (
-                            <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold" style={{ backgroundColor: "var(--color-success-bg)", color: "var(--color-success)" }}>
-                              <CheckCircle className="w-3 h-3" /> Verified
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex items-center gap-2">
+            <section>
+              {allReviews.length > 0 && (
+                <>
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider mb-2">Reviews</h3>
+                      <div className="flex items-center gap-3">
+                        <span className="text-3xl font-extrabold text-primary-text">{avgRating.toFixed(1)}</span>
+                        <div>
                           <div className="flex gap-0.5">
-                            {Array.from({ length: review.rating }, (_, i) => (
-                              <Star key={i} className="w-3.5 h-3.5" style={{ color: "#FF9600", fill: "#FF9600" }} />
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <Star key={star} className="w-4 h-4" style={{ color: star <= Math.round(avgRating) ? "#FF9600" : "#DDD", fill: star <= Math.round(avgRating) ? "#FF9600" : "transparent" }} />
                             ))}
                           </div>
-                          <button onClick={() => alert("Review reported. We'll review it shortly.")} className="p-1 rounded-full hover:text-red-500 transition-colors" style={{ color: "var(--color-secondary-text)" }} aria-label="Report review">
-                            <Flag className="w-3 h-3" />
+                          <span className="text-[12px] font-bold text-secondary-text">{allReviews.length} {allReviews.length === 1 ? "review" : "reviews"}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <select value={reviewSort} onChange={(e) => setReviewSort(e.target.value as "newest" | "highest" | "helpful")} className="appearance-none pl-3 pr-7 h-[34px] rounded-full text-[12px] font-extrabold border-2 border-border-color bg-white cursor-pointer outline-none focus:border-accent/40 transition-all" style={{ color: "#222222" }}>
+                        <option value="newest">Newest</option>
+                        <option value="highest">Highest Rated</option>
+                        <option value="helpful">Most Helpful</option>
+                      </select>
+                      <ArrowUpDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-secondary-text pointer-events-none" />
+                    </div>
+                  </div>
+                  <div className="mb-4 space-y-1.5">
+                    {[5, 4, 3, 2, 1].map((star) => {
+                      const count = breakdown[star];
+                      const pct = allReviews.length > 0 ? (count / allReviews.length) * 100 : 0;
+                      return (
+                        <div key={star} className="flex items-center gap-2">
+                          <span className="text-[12px] font-bold text-secondary-text w-4 text-right">{star}</span>
+                          <Star className="w-3 h-3" style={{ color: "#FF9600", fill: "#FF9600" }} />
+                          <div className="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
+                            <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: "#FF9600" }} />
+                          </div>
+                          <span className="text-[11px] font-bold text-secondary-text w-8 text-right">{count}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="space-y-2.5">
+                    {sortedReviews.map((review, index) => (
+                      <div key={index} className="p-4 rounded-2xl border-2" style={{ borderColor: "var(--color-border-color)", backgroundColor: "var(--color-background)" }}>
+                        <div className="flex items-center justify-between mb-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className="text-[14px] font-extrabold" style={{ color: "var(--color-primary-text)" }}>{review.username}</span>
+                            {review.verified && (
+                              <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-[10px] font-extrabold" style={{ backgroundColor: "var(--color-success-bg)", color: "var(--color-success)" }}>
+                                <CheckCircle className="w-3 h-3" /> Verified
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="flex gap-0.5">
+                              {Array.from({ length: review.rating }, (_, i) => (
+                                <Star key={i} className="w-3.5 h-3.5" style={{ color: "#FF9600", fill: "#FF9600" }} />
+                              ))}
+                            </div>
+                            <button onClick={() => alert("Review reported. We'll review it shortly.")} className="p-1 rounded-full hover:text-red-500 transition-colors" style={{ color: "var(--color-secondary-text)" }} aria-label="Report review">
+                              <Flag className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                        <p className="text-[13px] leading-relaxed font-semibold" style={{ color: "var(--color-secondary-text)" }}>{review.comment}</p>
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: "var(--color-border-color)" }}>
+                          {review.date && (
+                            <span className="text-[11px] font-bold" style={{ color: "var(--color-secondary-text)" }}>
+                              {new Date(review.date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
+                            </span>
+                          )}
+                          <button onClick={() => showToast("Marked as helpful!")} className="flex items-center gap-1 text-[11px] font-bold hover:text-accent transition-colors" style={{ color: "var(--color-secondary-text)" }}>
+                            <ThumbsUp className="w-3 h-3" /> Helpful ({review.helpful || 0})
                           </button>
                         </div>
                       </div>
-                      <p className="text-[13px] leading-relaxed font-semibold" style={{ color: "var(--color-secondary-text)" }}>{review.comment}</p>
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t" style={{ borderColor: "var(--color-border-color)" }}>
-                        {review.date && (
-                          <span className="text-[11px] font-bold" style={{ color: "var(--color-secondary-text)" }}>
-                            {new Date(review.date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
-                          </span>
-                        )}
-                        <button onClick={() => showToast("Marked as helpful!")} className="flex items-center gap-1 text-[11px] font-bold hover:text-accent transition-colors" style={{ color: "var(--color-secondary-text)" }}>
-                          <ThumbsUp className="w-3 h-3" /> Helpful ({review.helpful || 0})
-                        </button>
-                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Write a Review */}
+              <div className="mt-4 p-4 rounded-2xl border-2" style={{ borderColor: "var(--color-border-color)", backgroundColor: "var(--color-background)" }}>
+                <h3 className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider mb-3">
+                  {existingReviewId ? "Edit your review" : allReviews.length > 0 ? "Write a Review" : "Be the first to review"}
+                </h3>
+                {!authChecked ? (
+                  <div className="flex items-center gap-2 text-[13px] font-bold text-secondary-text">
+                    <div className="w-4 h-4 border-2 border-accent/20 border-t-accent rounded-full animate-spin" />
+                    Loading...
+                  </div>
+                ) : !userId ? (
+                  <div className="text-center py-4">
+                    <p className="text-[13px] font-bold text-secondary-text mb-3">Sign in to share your experience.</p>
+                    <a href="/login" className="inline-flex items-center justify-center h-[42px] px-6 rounded-full text-[14px] font-extrabold text-white transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0" style={{ backgroundColor: "#FF385C" }}>
+                      Sign in to Review
+                    </a>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 px-4 h-[42px] rounded-full text-[13px] font-bold border-2" style={{ borderColor: "var(--color-border-color)", color: "var(--color-primary-text)", backgroundColor: "var(--color-surface)" }}>
+                      <CheckCircle className="w-4 h-4" style={{ color: "#00A699" }} />
+                      {userName}
                     </div>
-                  ))}
-                </div>
-              </section>
-            )}
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button key={star} type="button" onClick={() => setReviewRating(star === reviewRating ? 0 : star)} className="transition-transform hover:scale-110">
+                          <Star className="w-6 h-6" style={{ color: star <= reviewRating ? "#FF9600" : "#DDD", fill: star <= reviewRating ? "#FF9600" : "transparent" }} />
+                        </button>
+                      ))}
+                      {reviewRating > 0 && <span className="text-[12px] font-bold text-secondary-text ml-2">{["", "Terrible", "Poor", "Average", "Good", "Excellent"][reviewRating]}</span>}
+                    </div>
+                    <textarea value={reviewComment} onChange={(e) => setReviewComment(e.target.value)} placeholder="Share your experience..." rows={3} className="w-full px-4 py-3 rounded-2xl text-[13px] font-bold border-2 outline-none resize-none transition-all focus:border-accent/40" style={{ borderColor: "var(--color-border-color)", color: "var(--color-primary-text)", backgroundColor: "var(--color-surface)" }} />
+                    <button disabled={submittingReview || reviewRating === 0 || !reviewComment.trim()} onClick={handleSubmitReview} className="w-full h-[42px] rounded-full text-[14px] font-extrabold text-white transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-40 disabled:hover:translate-y-0 disabled:hover:shadow-none" style={{ backgroundColor: "#FF385C" }}>
+                      {submittingReview ? "Saving..." : existingReviewId ? "Update Review" : "Submit Review"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </section>
 
             {/* Similar Rooms */}
             {similarRooms.length > 0 && (

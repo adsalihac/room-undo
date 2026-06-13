@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import { LayoutDashboard, List, PlusCircle, LogOut } from "lucide-react";
+import { LayoutDashboard, List, PlusCircle, MessageSquareText, LogOut } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 import Logo from "@/components/Logo";
 import Footer from "@/components/Footer";
@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/rooms", label: "Rooms", icon: List },
+  { href: "/admin/reviews", label: "Reviews", icon: MessageSquareText },
   { href: "/admin/add-room", label: "Add Room", icon: PlusCircle },
 ];
 

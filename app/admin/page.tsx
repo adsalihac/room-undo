@@ -1,4 +1,4 @@
-import { Building2, CheckCircle, ArrowRight, TrendingUp } from "lucide-react";
+import { Building2, CheckCircle, MessageSquareText, ArrowRight, TrendingUp } from "lucide-react";
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 
@@ -8,16 +8,19 @@ export default async function AdminDashboard() {
   const [
     { count: totalRooms },
     { count: availableRooms },
+    { count: totalReviews },
     { data: recentRooms },
   ] = await Promise.all([
     supabase.from("rooms").select("*", { count: "exact", head: true }),
     supabase.from("rooms").select("*", { count: "exact", head: true }).eq("available", true),
+    supabase.from("reviews").select("*", { count: "exact", head: true }),
     supabase.from("rooms").select("id, title, price, property_type, location_name, available, created_at, room_images(image_url)").order("created_at", { ascending: false }).limit(5),
   ]);
 
   const stats = [
     { label: "Total Rooms", value: totalRooms ?? 0, icon: Building2, change: "+12%", color: "#FF385C" },
     { label: "Available", value: availableRooms ?? 0, icon: CheckCircle, change: "+5%", color: "#00A699" },
+    { label: "Reviews", value: totalReviews ?? 0, icon: MessageSquareText, change: "", color: "#FF9600" },
   ];
 
   return (
@@ -32,7 +35,7 @@ export default async function AdminDashboard() {
         <p className="text-[14px] text-secondary-text font-bold mt-0.5">Overview of RoomUndo property listings.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
         {stats.map((stat, i) => (
           <div key={i} className="bg-surface p-6 rounded-2xl border-2 border-border-color/50 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
@@ -41,10 +44,12 @@ export default async function AdminDashboard() {
               >
                 <stat.icon className="w-6 h-6" style={{ color: stat.color }} />
               </div>
-              <span className="text-[12px] font-extrabold flex items-center gap-0.5" style={{ color: stat.color }}>
-                <TrendingUp className="w-3.5 h-3.5" />
-                {stat.change}
-              </span>
+              {stat.change && (
+                <span className="text-[12px] font-extrabold flex items-center gap-0.5" style={{ color: stat.color }}>
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  {stat.change}
+                </span>
+              )}
             </div>
             <p className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider">{stat.label}</p>
             <p className="text-3xl font-extrabold text-primary-text mt-1">{typeof stat.value === 'number' ? stat.value.toLocaleString('en-IN') : stat.value}</p>
