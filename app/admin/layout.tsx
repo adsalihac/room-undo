@@ -29,26 +29,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside className="w-full md:w-64 bg-surface border-r border-border-color/70 flex flex-col shrink-0">
         <div className="px-6 py-5 border-b border-border-color/70">
           <Link href="/" className="flex items-center gap-2.5">
-            <Logo size={28} />
+            <Logo size={30} />
           </Link>
-          <span className="text-[11px] font-bold text-secondary-text mt-1 block uppercase tracking-wider">Admin Panel</span>
+          <span className="text-[11px] font-extrabold text-accent mt-1 block uppercase tracking-wider">Admin Panel</span>
         </div>
 
-        <nav className="flex-1 p-3 space-y-1">
+        <nav className="flex-1 p-3 space-y-1.5">
           {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-bold transition-all ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-[14px] font-extrabold transition-all ${
                   isActive
-                    ? "text-white shadow-sm"
+                    ? "text-white shadow-md"
                     : "text-secondary-text hover:text-primary-text hover:bg-accent-light"
                 }`}
-                style={isActive ? { backgroundColor: "#0F172A" } : undefined}
+                style={isActive ? { backgroundColor: "#FF385C" } : undefined}
               >
-                <item.icon className="w-4 h-4" />
+                <item.icon className="w-5 h-5" />
                 {item.label}
               </Link>
             );
@@ -58,9 +58,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="p-3 border-t border-border-color/70">
           <button
             onClick={handleLogout}
-            className="flex w-full items-center gap-3 px-3.5 py-2.5 rounded-full text-[13px] font-bold text-secondary-text hover:text-error hover:bg-error-bg transition-all"
+            className="flex w-full items-center gap-3 px-4 py-3 rounded-2xl text-[14px] font-extrabold text-secondary-text hover:text-error hover:bg-error-bg transition-all"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-5 h-5" />
             Logout
           </button>
         </div>

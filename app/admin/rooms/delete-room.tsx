@@ -13,9 +13,10 @@ export default function DeleteRoomButton({ id, deleteAction }: DeleteRoomButtonP
       <input type="hidden" name="id" value={id} />
       <button
         type="submit"
-        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-[12px] font-bold text-error hover:bg-error-bg rounded-full transition-all"
+        className="inline-flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-extrabold rounded-full border-2 transition-all hover:-translate-y-0.5"
+        style={{ borderColor: "#FFE6E6", color: "#FF4B4B", backgroundColor: "#FFE6E6" }}
       >
-        <Trash2 className="w-3.5 h-3.5" />
+        <Trash2 className="w-4 h-4" />
         Delete
       </button>
     </form>

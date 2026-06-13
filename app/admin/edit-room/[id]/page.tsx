@@ -100,7 +100,7 @@ export default function EditRoom() {
     return (
       <div className="max-w-3xl mx-auto pb-20">
         <div className="flex items-center justify-center py-24">
-          <div className="w-7 h-7 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-[4px] border-accent/20 border-t-accent rounded-full animate-spin" />
         </div>
       </div>
     );
@@ -109,50 +109,50 @@ export default function EditRoom() {
   return (
     <div className="max-w-3xl mx-auto pb-20">
       <div className="mb-8">
-        <Link href="/admin/rooms" className="inline-flex items-center gap-1.5 text-[13px] font-bold text-secondary-text hover:text-primary-text transition-colors mb-4">
-          <ArrowLeft className="w-4 h-4" />
+        <Link href="/admin/rooms" className="inline-flex items-center gap-1.5 text-[14px] font-extrabold transition-all hover:-translate-y-0.5 mb-4" style={{ color: "#FF385C" }}>
+          <ArrowLeft className="w-4.5 h-4.5" />
           Back to Rooms
         </Link>
-        <h1 className="text-2xl font-bold text-primary-text">Edit Room</h1>
-        <p className="text-[14px] text-secondary-text mt-0.5">Update the property details.</p>
+        <h1 className="text-2xl font-extrabold text-primary-text">Edit Room</h1>
+        <p className="text-[14px] text-secondary-text font-bold mt-0.5">Update the property details.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="bg-surface p-6 rounded-xl border border-border-color/70 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 pb-1 border-b border-border-color/50">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-            <h2 className="text-[13px] font-bold text-primary-text uppercase tracking-wider">Basic Information</h2>
+        <div className="bg-surface p-6 rounded-2xl border-2 border-border-color/50 shadow-lg space-y-5">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-border-color/40">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#FF385C" }} />
+            <h2 className="text-[14px] font-extrabold text-primary-text uppercase tracking-wider">Basic Information</h2>
           </div>
 
           <div>
-            <label className="block text-[13px] font-bold text-primary-text mb-1.5">Title</label>
+            <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Title</label>
             <input
               {...register("title")}
-              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
+              className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background"
             />
-            {errors.title && <p className="text-error text-[12px] font-medium mt-1">{errors.title.message as string}</p>}
+            {errors.title && <p className="text-error text-[13px] font-bold mt-1">{errors.title.message as string}</p>}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
-              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Monthly Rent (₹)</label>
+              <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Monthly Rent (₹)</label>
               <input
                 type="number"
                 {...register("price", { valueAsNumber: true })}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
+                className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background"
               />
             </div>
             <div>
-              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Deposit (₹)</label>
+              <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Deposit (₹)</label>
               <input
                 type="number"
                 {...register("deposit", { valueAsNumber: true })}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
+                className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background"
               />
             </div>
             <div>
-              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Property Type</label>
-              <select {...register("property_type")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all bg-surface">
+              <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Property Type</label>
+              <select {...register("property_type")} className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background">
                 <option value="Shared Room">Shared Room</option>
                 <option value="Private Room">Private Room</option>
                 <option value="PG">PG</option>
@@ -161,8 +161,8 @@ export default function EditRoom() {
               </select>
             </div>
             <div>
-              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Gender Preference</label>
-              <select {...register("gender_preference")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all bg-surface">
+              <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Gender Preference</label>
+              <select {...register("gender_preference")} className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background">
                 <option value="Any">Any</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
@@ -171,89 +171,90 @@ export default function EditRoom() {
           </div>
 
           <div>
-            <label className="block text-[13px] font-bold text-primary-text mb-1.5">Description</label>
+            <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Description</label>
             <textarea
               {...register("description")}
               rows={4}
-              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all resize-none"
+              className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all resize-none bg-background"
             />
           </div>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-border-color/70 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 pb-1 border-b border-border-color/50">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent-warm" />
-            <h2 className="text-[13px] font-bold text-primary-text uppercase tracking-wider">Location</h2>
+        <div className="bg-surface p-6 rounded-2xl border-2 border-border-color/50 shadow-lg space-y-5">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-border-color/40">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#428BFF" }} />
+            <h2 className="text-[14px] font-extrabold text-primary-text uppercase tracking-wider">Location</h2>
           </div>
 
           <div>
-            <label className="block text-[13px] font-bold text-primary-text mb-1.5">Location Name / Area</label>
+            <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Location Name / Area</label>
             <input
               {...register("location_name")}
-              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all"
+              className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background"
             />
           </div>
 
           <div>
-            <label className="block text-[13px] font-bold text-primary-text mb-2">Pin Location on Map</label>
-            <div className="w-full h-72 bg-accent-light rounded-xl overflow-hidden border-2 border-border-color relative">
+            <label className="block text-[14px] font-extrabold text-primary-text mb-2">Pin Location on Map</label>
+            <div className="w-full h-72 rounded-2xl overflow-hidden border-2 border-border-color shadow-sm relative">
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                <MapPin className="w-7 h-7 text-accent -mt-7 drop-shadow-lg" />
+                <MapPin className="w-8 h-8 -mt-8 drop-shadow-lg" style={{ color: "#FF385C" }} />
               </div>
               <LocationPicker center={coordinates} onCenterChange={(c) => setCoordinates(c)} />
             </div>
           </div>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-border-color/70 shadow-sm space-y-5">
-          <div className="flex items-center gap-2 pb-1 border-b border-border-color/50">
-            <div className="w-1.5 h-1.5 rounded-full bg-success" />
-            <h2 className="text-[13px] font-bold text-primary-text uppercase tracking-wider">Contact Details</h2>
+        <div className="bg-surface p-6 rounded-2xl border-2 border-border-color/50 shadow-lg space-y-5">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-border-color/40">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#FF385C" }} />
+            <h2 className="text-[14px] font-extrabold text-primary-text uppercase tracking-wider">Contact Details</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
-              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Owner Name</label>
-              <input {...register("owner_name")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all" />
+              <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Owner Name</label>
+              <input {...register("owner_name")} className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background" />
             </div>
             <div>
-              <label className="block text-[13px] font-bold text-primary-text mb-1.5">Phone</label>
-              <input {...register("phone")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all" />
+              <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Phone</label>
+              <input {...register("phone")} className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background" />
             </div>
             <div>
-              <label className="block text-[13px] font-bold text-primary-text mb-1.5">WhatsApp</label>
-              <input {...register("whatsapp")} className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text outline-none focus:border-accent/30 focus:ring-2 focus:ring-accent/5 transition-all" />
+              <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">WhatsApp</label>
+              <input {...register("whatsapp")} className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background" />
             </div>
           </div>
         </div>
 
-        <div className="bg-surface p-6 rounded-xl border border-border-color/70 shadow-sm space-y-4">
-          <div className="flex items-center gap-2 pb-1 border-b border-border-color/50">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent" />
-            <h2 className="text-[13px] font-bold text-primary-text uppercase tracking-wider">Status</h2>
+        <div className="bg-surface p-6 rounded-2xl border-2 border-border-color/50 shadow-lg space-y-4">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-border-color/40">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#FF385C" }} />
+            <h2 className="text-[14px] font-extrabold text-primary-text uppercase tracking-wider">Status</h2>
           </div>
           <label className="flex items-center gap-3 cursor-pointer">
             <input
               type="checkbox"
               checked={isAvailable}
               onChange={(e) => setIsAvailable(e.target.checked)}
-              className="w-4 h-4 rounded border-border-color text-accent focus:ring-accent/30"
+              className="w-5 h-5 rounded border-border-color focus:ring-accent/30"
+              style={{ accentColor: "#FF385C" }}
             />
-            <span className="text-[14px] font-bold text-primary-text">Available for rent</span>
+            <span className="text-[15px] font-extrabold text-primary-text">Available for rent</span>
           </label>
         </div>
 
         <div className="flex justify-end gap-3 pt-2">
-          <Link href="/admin/rooms" className="inline-flex items-center h-[44px] px-7 rounded-full text-[14px] font-bold text-primary-text border-2 border-border-color hover:bg-accent-light transition-all">
+          <Link href="/admin/rooms" className="inline-flex items-center h-[48px] px-8 rounded-full text-[15px] font-extrabold border-2 transition-all hover:-translate-y-0.5 active:translate-y-0" style={{ borderColor: "#E5E5E5", color: "#2B2B2B" }}>
             Cancel
           </Link>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="inline-flex items-center gap-2 h-[44px] px-7 rounded-full text-[14px] font-bold text-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0"
-            style={{ backgroundColor: "#0F172A" }}
+            className="inline-flex items-center gap-2 h-[48px] px-8 rounded-full text-[15px] font-extrabold text-white shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:hover:translate-y-0"
+            style={{ backgroundColor: "#FF385C" }}
           >
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {isSubmitting ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
             Save Changes
           </button>
         </div>

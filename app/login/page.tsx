@@ -31,22 +31,22 @@ export default function LoginPage() {
   return (
     <div className="min-h-full flex flex-col justify-center py-12 px-4 bg-background h-full w-full">
       <div className="absolute top-6 left-6">
-        <Link href="/" className="flex items-center gap-1.5 text-[13px] font-bold text-secondary-text hover:text-primary-text transition-colors">
-          <ArrowLeft className="w-4 h-4" />
+        <Link href="/" className="flex items-center gap-1.5 text-[14px] font-extrabold transition-all hover:-translate-y-0.5" style={{ color: "#FF385C" }}>
+          <ArrowLeft className="w-4.5 h-4.5" />
           Back to Map
         </Link>
       </div>
 
       <div className="w-full max-w-sm mx-auto">
         <div className="flex flex-col items-center mb-10">
-          <Logo size={44} showWordmark={false} />
+          <Logo size={52} showWordmark={false} />
           <h2 className="mt-5 text-2xl font-extrabold text-primary-text">Welcome back</h2>
-          <p className="mt-1.5 text-[14px] text-secondary-text">Sign in to access the admin panel.</p>
+          <p className="mt-1.5 text-[15px] text-secondary-text font-bold">Sign in to access the admin panel.</p>
         </div>
 
-        <div className="bg-surface p-7 rounded-xl border border-border-color/70 shadow-sm">
+        <div className="bg-surface p-7 rounded-2xl border-2 border-border-color/50 shadow-lg">
           {error && (
-            <div className="mb-4 text-[12px] font-medium text-error bg-error-bg border border-error/10 rounded-lg px-3.5 py-2.5">
+            <div className="mb-4 text-[13px] font-bold text-error bg-error-bg border-2 border-error/20 rounded-xl px-4 py-2.5">
               {error}
             </div>
           )}
@@ -54,10 +54,11 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             disabled={isLoading}
-            className="flex w-full items-center justify-center gap-3 h-[46px] rounded-full border-2 border-border-color text-[14px] font-bold text-primary-text hover:bg-accent-light hover:border-accent/20 transition-all disabled:opacity-50"
+            className="flex w-full items-center justify-center gap-3 h-[50px] rounded-full border-2 text-[15px] font-extrabold transition-all hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50"
+            style={{ borderColor: "#E5E5E5", color: "#2B2B2B" }}
           >
             {isLoading ? (
-              <div className="w-4 h-4 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-[3px] border-accent/20 border-t-accent rounded-full animate-spin" />
             ) : (
               <>
                 <svg className="w-5 h-5" viewBox="0 0 24 24">

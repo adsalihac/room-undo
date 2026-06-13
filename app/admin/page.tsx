@@ -16,72 +16,80 @@ export default async function AdminDashboard() {
   ]);
 
   const stats = [
-    { label: "Total Rooms", value: totalRooms ?? 0, icon: Building2, change: "+12%", color: "bg-accent" },
-    { label: "Available", value: availableRooms ?? 0, icon: CheckCircle, change: "+5%", color: "bg-success" },
+    { label: "Total Rooms", value: totalRooms ?? 0, icon: Building2, change: "+12%", color: "#FF385C" },
+    { label: "Available", value: availableRooms ?? 0, icon: CheckCircle, change: "+5%", color: "#00A699" },
   ];
 
   return (
     <div className="max-w-6xl mx-auto">
       <div className="mb-8">
         <div className="flex items-center gap-2 mb-1">
-          <h1 className="text-2xl font-bold text-primary-text">Dashboard</h1>
-          <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-success-bg text-success border border-success/20">
+          <h1 className="text-2xl font-extrabold text-primary-text">Dashboard</h1>
+          <span className="px-3 py-0.5 rounded-full text-[11px] font-extrabold border-2" style={{ color: "#FF385C", borderColor: "#FF385C", backgroundColor: "#FFF2F4" }}>
             Live
           </span>
         </div>
-        <p className="text-[14px] text-secondary-text">Overview of RoomUndo property listings.</p>
+        <p className="text-[14px] text-secondary-text font-bold mt-0.5">Overview of RoomUndo property listings.</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-10">
         {stats.map((stat, i) => (
-          <div key={i} className="bg-surface p-5 rounded-xl border border-border-color/70 shadow-sm hover:shadow-md transition-all">
+          <div key={i} className="bg-surface p-6 rounded-2xl border-2 border-border-color/50 shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] font-bold text-success flex items-center gap-0.5">
-                <TrendingUp className="w-3 h-3" />
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 shadow-sm"
+                style={{ backgroundColor: `${stat.color}15` }}
+              >
+                <stat.icon className="w-6 h-6" style={{ color: stat.color }} />
+              </div>
+              <span className="text-[12px] font-extrabold flex items-center gap-0.5" style={{ color: stat.color }}>
+                <TrendingUp className="w-3.5 h-3.5" />
                 {stat.change}
               </span>
             </div>
-            <p className="text-[11px] font-bold text-secondary-text uppercase tracking-wider">{stat.label}</p>
-            <p className="text-2xl font-extrabold text-primary-text mt-1">{typeof stat.value === 'number' ? stat.value.toLocaleString('en-IN') : stat.value}</p>
+            <p className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider">{stat.label}</p>
+            <p className="text-3xl font-extrabold text-primary-text mt-1">{typeof stat.value === 'number' ? stat.value.toLocaleString('en-IN') : stat.value}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-surface rounded-xl border border-border-color/70 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-border-color/70 flex items-center justify-between">
-          <h2 className="text-[14px] font-bold text-primary-text">Recent Rooms</h2>
-          <Link href="/admin/rooms" className="flex items-center gap-1 text-[12px] font-bold text-secondary-text hover:text-primary-text transition-colors">
-            View All <ArrowRight className="w-3 h-3" />
+      <div className="bg-surface rounded-2xl border-2 border-border-color/50 shadow-lg overflow-hidden">
+        <div className="px-6 py-5 border-b border-border-color/50 flex items-center justify-between">
+          <h2 className="text-[15px] font-extrabold text-primary-text">Recent Rooms</h2>
+          <Link href="/admin/rooms" className="flex items-center gap-1 text-[13px] font-extrabold transition-all hover:-translate-y-0.5" style={{ color: "#FF385C" }}>
+            View All <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
         {(!recentRooms || recentRooms.length === 0) ? (
           <div className="p-12 text-center">
-            <div className="w-12 h-12 rounded-xl bg-accent-light flex items-center justify-center mx-auto mb-3">
-              <Building2 className="w-5 h-5 text-secondary-text" />
+            <div className="w-14 h-14 rounded-2xl bg-accent-light flex items-center justify-center mx-auto mb-3 shadow-sm">
+              <Building2 className="w-6 h-6" style={{ color: "#FF385C" }} />
             </div>
-            <p className="text-[14px] font-semibold text-primary-text mb-1">No rooms yet</p>
-            <p className="text-[13px] text-secondary-text">Add your first room to get started.</p>
+            <p className="text-[15px] font-extrabold text-primary-text mb-1">No rooms yet</p>
+            <p className="text-[14px] font-bold text-secondary-text">Add your first room to get started.</p>
           </div>
         ) : (
-          <div className="divide-y divide-border-color/50">
+          <div className="divide-y-2 divide-border-color/40">
             {recentRooms.map((room) => (
-              <div key={room.id} className="flex items-center gap-4 px-6 py-4 hover:bg-accent-light/50 transition-colors">
-                <div className="w-11 h-11 rounded-xl bg-accent-light shrink-0 overflow-hidden border border-border-color/50">
+              <div key={room.id} className="flex items-center gap-4 px-6 py-4 hover:bg-accent-light/30 transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-accent-light shrink-0 overflow-hidden border-2 border-border-color/50 shadow-sm">
                   {room.room_images?.[0]?.image_url ? (
                     <img src={room.room_images[0].image_url} alt={room.title} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-secondary-text/30 text-xs font-bold">—</div>
+                    <div className="w-full h-full flex items-center justify-center text-secondary-text/30 text-xs font-extrabold">—</div>
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-bold text-primary-text truncate">{room.title}</p>
-                  <p className="text-[12px] text-secondary-text">{room.location_name} · {room.property_type}</p>
+                  <p className="text-[15px] font-extrabold text-primary-text truncate">{room.title}</p>
+                  <p className="text-[13px] font-bold text-secondary-text">{room.location_name} · {room.property_type}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-[14px] font-bold text-primary-text">₹{room.price.toLocaleString("en-IN")}</p>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                    room.available ? "text-success bg-success-bg" : "text-secondary-text bg-accent-light"
-                  }`}>
+                  <p className="text-[15px] font-extrabold text-primary-text">₹{room.price.toLocaleString("en-IN")}</p>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-extrabold border-2 ${
+                    room.available ? "border-accent/30" : "border-border-color"
+                  }`} style={{
+                    color: room.available ? "#00A699" : "#717171",
+                    backgroundColor: room.available ? "#E6F7E6" : "#F7F7F7"
+                  }}>
                     {room.available ? "Available" : "Occupied"}
                   </span>
                 </div>

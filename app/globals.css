@@ -2,24 +2,26 @@
 @import "leaflet/dist/leaflet.css";
 
 @theme inline {
-  --color-background: #F7F8FA;
+  --color-background: #F7F7F7;
   --color-surface: #FFFFFF;
-  --color-primary-text: #0F172A;
-  --color-secondary-text: #64748B;
-  --color-border-color: #E2E8F0;
-  --color-accent: #0F172A;
-  --color-accent-hover: #1E293B;
-  --color-accent-light: #F1F5F9;
-  --color-accent-warm: #D97706;
-  --color-accent-warm-bg: #FFFBEB;
-  --color-error: #DC2626;
-  --color-error-bg: #FEF2F2;
-  --color-success: #059669;
-  --color-success-bg: #ECFDF5;
-  --color-warning: #D97706;
-  --color-warning-bg: #FFFBEB;
+  --color-primary-text: #222222;
+  --color-secondary-text: #717171;
+  --color-border-color: #DDDDDD;
+  --color-accent: #FF385C;
+  --color-accent-hover: #E31C5F;
+  --color-accent-light: #FFF2F4;
+  --color-accent-blue: #428BFF;
+  --color-accent-blue-bg: #EBF4FF;
+  --color-accent-orange: #FF9600;
+  --color-accent-orange-bg: #FFF4E0;
+  --color-error: #FF4B4B;
+  --color-error-bg: #FFE6E6;
+  --color-success: #00A699;
+  --color-success-bg: #E6F7E6;
+  --color-warning: #FF9600;
+  --color-warning-bg: #FFF4E0;
 
-  --font-sans: var(--font-sans, "Plus Jakarta Sans", system-ui, sans-serif);
+  --font-sans: var(--font-sans, "Nunito", system-ui, sans-serif);
 }
 
 /* ─── Scrollbar ─── */
@@ -30,9 +32,9 @@
 
 /* ─── Focus ring ─── */
 *:focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 3px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: 4px;
+  border-radius: 12px;
 }
 
 /* ─── Leaflet ─── */
@@ -57,32 +59,32 @@ textarea {
 
 input::placeholder,
 textarea::placeholder {
-  color: #94A3B8;
+  color: #AAAAAA;
 }
 
 /* ─── Range ─── */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
-  background: #E2E8F0;
-  border-radius: 2px;
+  height: 6px;
+  background: #E5E5E5;
+  border-radius: 3px;
   outline: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background: var(--color-accent);
   border-radius: 50%;
   cursor: pointer;
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   background: var(--color-accent);
   border-radius: 50%;
   cursor: pointer;
@@ -99,16 +101,4 @@ input[type="radio"]:checked + div {
   background: var(--color-accent-light);
   color: var(--color-primary-text);
   border-color: var(--color-accent);
-}
-
-/* ─── Skeleton pulse ─── */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
 }

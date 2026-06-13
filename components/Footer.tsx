@@ -2,9 +2,9 @@ import Logo from "./Logo";
 
 export default function Footer() {
   return (
-    <div className="flex items-center justify-between px-4 py-2.5 border-t border-border-color bg-surface/80">
-      <Logo size={18} showWordmark={false} />
-      <p className="text-[11px] font-medium text-secondary-text">
+    <div className="flex items-center justify-between px-5 py-3 border-t border-border-color bg-surface">
+      <Logo size={20} showWordmark={false} />
+      <p className="text-[12px] font-bold text-secondary-text">
         &copy; 2026 RoomUndo
       </p>
     </div>

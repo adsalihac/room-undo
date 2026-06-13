@@ -13,8 +13,8 @@ const MapComponent = dynamic(() => import("@/components/MapComponent"), {
   loading: () => (
     <div className="w-full h-full flex items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-3">
-        <div className="w-7 h-7 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />
-        <p className="text-[14px] font-semibold text-secondary-text">Loading map...</p>
+        <div className="w-8 h-8 border-[4px] border-accent/20 border-t-accent rounded-full animate-spin" />
+        <p className="text-[15px] font-extrabold text-secondary-text">Loading map...</p>
       </div>
     </div>
   ),
@@ -87,8 +87,8 @@ export default function Home() {
       <main className="relative w-full h-full overflow-hidden bg-background">
         <div className="w-full h-full flex items-center justify-center">
           <div className="flex flex-col items-center gap-3">
-            <div className="w-7 h-7 border-[3px] border-accent/10 border-t-accent rounded-full animate-spin" />
-            <p className="text-[14px] font-semibold text-secondary-text">Loading rooms...</p>
+            <div className="w-8 h-8 border-[4px] border-accent/20 border-t-accent rounded-full animate-spin" />
+            <p className="text-[15px] font-extrabold text-secondary-text">Loading rooms...</p>
           </div>
         </div>
       </main>
@@ -111,7 +111,7 @@ export default function Home() {
           </div>
         }
         second={
-          <div className="w-full h-full">
+          <div className="w-full h-full shadow-2xl relative z-10">
             <RoomListPanel
               rooms={rooms}
               selectedRoomId={selectedRoom?.id || null}
