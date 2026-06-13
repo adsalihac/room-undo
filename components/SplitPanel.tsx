@@ -63,17 +63,11 @@ export default function SplitPanel({
       <div
         className={`relative flex items-center justify-center shrink-0 transition-colors group ${
           isHorizontal
-            ? "w-[6px] cursor-col-resize flex-col"
-            : "h-[6px] cursor-row-resize"
-        } bg-border-color/30 hover:bg-border-color/60`}
+            ? "w-[5px] cursor-col-resize"
+            : "h-[5px] cursor-row-resize"
+        } bg-gray-100 hover:bg-gray-200`}
         onMouseDown={handleMouseDown}
-      >
-        <div
-          className={`rounded-full bg-border-color/50 group-hover:bg-border-color transition-colors ${
-            isHorizontal ? "h-8 w-1" : "w-8 h-1"
-          }`}
-        />
-      </div>
+      />
       <div
         style={isHorizontal ? { width: `${(1 - ratio) * 100}%` } : { height: `${(1 - ratio) * 100}%` }}
         className="overflow-hidden"

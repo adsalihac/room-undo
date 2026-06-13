@@ -61,52 +61,50 @@ export default function AddRoom() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto pb-20">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary-text mb-1">Add Room</h1>
-        <p className="text-[15px] text-secondary-text">Fill in the details to list a new property.</p>
+    <div className="max-w-3xl mx-auto pb-16">
+      <div className="mb-6">
+        <h1 className="text-xl font-bold text-primary-text">Add Room</h1>
+        <p className="text-[13px] text-secondary-text mt-0.5">Fill in the details to list a new property.</p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Basic Info */}
-        <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
-          <h2 className="text-[14px] font-semibold text-primary-text">Basic Information</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="md:col-span-2">
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">Title</label>
-              <input 
-                {...register("title")}
-                placeholder="e.g. Premium 1BHK near Technopark"
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 focus:ring-0 outline-none transition-all"
-              />
-              {errors.title && <p className="text-error text-[12px] mt-1">{errors.title.message as string}</p>}
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <div className="bg-surface p-5 rounded-lg border border-border-color space-y-4">
+          <h2 className="text-[13px] font-semibold text-primary-text">Basic Information</h2>
 
+          <div>
+            <label className="block text-[12px] font-medium text-primary-text mb-1">Title</label>
+            <input
+              {...register("title")}
+              placeholder="e.g. Premium 1BHK near Technopark"
+              className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
+            />
+            {errors.title && <p className="text-error text-[11px] mt-1">{errors.title.message as string}</p>}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">Monthly Rent (₹)</label>
-              <input 
+              <label className="block text-[12px] font-medium text-primary-text mb-1">Monthly Rent (₹)</label>
+              <input
                 type="number"
                 {...register("price", { valueAsNumber: true })}
                 placeholder="0"
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
               />
             </div>
             <div>
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">Deposit (₹)</label>
-              <input 
+              <label className="block text-[12px] font-medium text-primary-text mb-1">Deposit (₹)</label>
+              <input
                 type="number"
                 {...register("deposit", { valueAsNumber: true })}
                 placeholder="0"
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
               />
             </div>
-
             <div>
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">Property Type</label>
-              <select 
+              <label className="block text-[12px] font-medium text-primary-text mb-1">Property Type</label>
+              <select
                 {...register("property_type")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text outline-none focus:border-accent/30 transition-colors bg-surface"
               >
                 <option value="Shared Room">Shared Room</option>
                 <option value="Private Room">Private Room</option>
@@ -116,10 +114,10 @@ export default function AddRoom() {
               </select>
             </div>
             <div>
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">Gender Preference</label>
-              <select 
+              <label className="block text-[12px] font-medium text-primary-text mb-1">Gender Preference</label>
+              <select
                 {...register("gender_preference")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text focus:border-primary-text/30 outline-none transition-all bg-white"
+                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text outline-none focus:border-accent/30 transition-colors bg-surface"
               >
                 <option value="Any">Any</option>
                 <option value="Male">Male</option>
@@ -129,88 +127,86 @@ export default function AddRoom() {
           </div>
 
           <div>
-            <label className="block text-[13px] font-medium text-primary-text mb-1.5">Description</label>
-            <textarea 
+            <label className="block text-[12px] font-medium text-primary-text mb-1">Description</label>
+            <textarea
               {...register("description")}
               rows={4}
               placeholder="Describe the property, surroundings, and house rules..."
-              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all resize-none"
+              className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors resize-none"
             />
+            {errors.description && <p className="text-error text-[11px] mt-1">{errors.description.message as string}</p>}
           </div>
         </div>
 
-        {/* Location */}
-        <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
-          <h2 className="text-[14px] font-semibold text-primary-text flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-secondary-text" />
+        <div className="bg-surface p-5 rounded-lg border border-border-color space-y-4">
+          <h2 className="text-[13px] font-semibold text-primary-text flex items-center gap-1.5">
+            <MapPin className="w-3.5 h-3.5 text-secondary-text" />
             Location
           </h2>
-          
+
           <div>
-            <label className="block text-[13px] font-medium text-primary-text mb-1.5">Location Name / Area</label>
-            <input 
+            <label className="block text-[12px] font-medium text-primary-text mb-1">Location Name / Area</label>
+            <input
               {...register("location_name")}
               placeholder="e.g. Kazhakkoottam, Trivandrum"
-              className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+              className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
             />
+            {errors.location_name && <p className="text-error text-[11px] mt-1">{errors.location_name.message as string}</p>}
           </div>
 
           <div>
-            <label className="block text-[13px] font-medium text-primary-text mb-1.5">Pin Location on Map</label>
-            <div className="w-full h-72 bg-gray-100 rounded-xl overflow-hidden border border-border-color relative">
+            <label className="block text-[12px] font-medium text-primary-text mb-1.5">Pin Location on Map</label>
+            <div className="w-full h-64 bg-gray-100 rounded-lg overflow-hidden border border-border-color relative">
               <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                <MapPin className="w-7 h-7 text-primary-text -mt-8 drop-shadow-md" />
+                <MapPin className="w-6 h-6 text-primary-text -mt-6 drop-shadow-sm" />
               </div>
               <LocationPicker
                 center={coordinates}
                 onCenterChange={(c) => setCoordinates(c)}
               />
             </div>
-            <p className="text-[12px] text-secondary-text mt-1.5">
-              Drag the map to place the pin at the property location.
-            </p>
+            <p className="text-[11px] text-secondary-text mt-1">Drag the map to place the pin.</p>
           </div>
         </div>
 
-        {/* Contact */}
-        <div className="bg-surface p-6 rounded-2xl border border-border-color space-y-5">
-          <h2 className="text-[14px] font-semibold text-primary-text">Contact Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="bg-surface p-5 rounded-lg border border-border-color space-y-4">
+          <h2 className="text-[13px] font-semibold text-primary-text">Contact Details</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">Owner Name</label>
-              <input 
+              <label className="block text-[12px] font-medium text-primary-text mb-1">Owner Name</label>
+              <input
                 {...register("owner_name")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
               />
             </div>
             <div>
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">Phone</label>
-              <input 
+              <label className="block text-[12px] font-medium text-primary-text mb-1">Phone</label>
+              <input
                 {...register("phone")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
               />
             </div>
             <div>
-              <label className="block text-[13px] font-medium text-primary-text mb-1.5">WhatsApp</label>
-              <input 
+              <label className="block text-[12px] font-medium text-primary-text mb-1">WhatsApp</label>
+              <input
                 {...register("whatsapp")}
-                className="w-full px-4 py-2.5 rounded-xl border border-border-color text-[14px] text-primary-text placeholder:text-secondary-text/60 focus:border-primary-text/30 outline-none transition-all"
+                className="w-full px-3 py-2 rounded-lg border border-border-color text-[13px] text-primary-text placeholder:text-gray-400 outline-none focus:border-accent/30 transition-colors"
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-3">
-          <button type="button" className="h-[44px] px-6 rounded-xl text-[14px] font-medium text-primary-text border border-border-color hover:bg-gray-50 transition-colors">
+        <div className="flex justify-end gap-2 pt-1">
+          <button type="button" className="h-[38px] px-4 rounded-lg text-[13px] font-medium text-primary-text border border-border-color hover:bg-gray-50 transition-colors">
             Cancel
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isSubmitting}
-            className="flex items-center gap-2 h-[44px] px-6 rounded-xl text-[14px] font-medium text-white disabled:opacity-50 transition-colors"
+            className="inline-flex items-center gap-1.5 h-[38px] px-4 rounded-lg text-[13px] font-medium text-white disabled:opacity-50 transition-colors hover:bg-accent-hover"
             style={{ backgroundColor: '#0F172A' }}
           >
-            {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            {isSubmitting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : null}
             Publish Room
           </button>
         </div>

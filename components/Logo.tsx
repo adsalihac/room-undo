@@ -6,7 +6,7 @@ interface LogoProps {
 
 export default function Logo({ showWordmark = true, size = 32, className = "" }: LogoProps) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`flex items-center gap-2 ${className}`}>
       <svg
         width={size}
         height={size}
@@ -15,7 +15,7 @@ export default function Logo({ showWordmark = true, size = 32, className = "" }:
         xmlns="http://www.w3.org/2000/svg"
         style={{ flexShrink: 0 }}
       >
-        <rect x="1" y="1" width="30" height="30" rx="7" fill="#0F172A" />
+        <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="#0F172A" stroke="#0F172A" strokeWidth="0.5" />
         <path
           d="M7 26 L7 7 L26 7"
           stroke="white"
@@ -40,7 +40,7 @@ export default function Logo({ showWordmark = true, size = 32, className = "" }:
       </svg>
 
       {showWordmark && (
-        <span className="text-[16px] font-semibold text-primary-text tracking-tight" style={{ fontFamily: 'var(--font-geist-sans)' }}>
+        <span className="text-[15px] font-semibold text-primary-text tracking-tight">
           Room<span className="font-normal">Undo</span>
         </span>
       )}

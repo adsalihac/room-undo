@@ -1,5 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2 } from "lucide-react";
 import Link from "next/link";
 
 export default async function AdminRoomsPage() {
@@ -15,86 +15,82 @@ export default async function AdminRoomsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto pb-20">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+    <div className="max-w-5xl mx-auto pb-16">
+      <div className="flex items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-primary-text mb-1">Rooms</h1>
-          <p className="text-[15px] text-secondary-text">View and manage property listings.</p>
+          <h1 className="text-xl font-bold text-primary-text">Rooms</h1>
+          <p className="text-[13px] text-secondary-text mt-0.5">Manage property listings.</p>
         </div>
-        <Link 
-          href="/admin/add-room" 
-          className="flex items-center gap-2 h-[40px] px-5 rounded-xl text-[14px] font-medium text-white transition-colors"
+        <Link
+          href="/admin/add-room"
+          className="inline-flex items-center gap-1.5 h-[36px] px-4 rounded-lg text-[13px] font-medium text-white transition-colors hover:bg-accent-hover"
           style={{ backgroundColor: '#0F172A' }}
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3.5 h-3.5" />
           Add Room
         </Link>
       </div>
 
-      <div className="bg-surface rounded-2xl border border-border-color overflow-hidden">
+      <div className="bg-surface rounded-lg border border-border-color overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full text-left">
             <thead>
               <tr className="border-b border-border-color">
-                <th className="py-3.5 px-5 font-semibold text-[12px] text-secondary-text uppercase tracking-[0.12em]">Property</th>
-                <th className="py-3.5 px-5 font-semibold text-[12px] text-secondary-text uppercase tracking-[0.12em]">Location</th>
-                <th className="py-3.5 px-5 font-semibold text-[12px] text-secondary-text uppercase tracking-[0.12em]">Price</th>
-                <th className="py-3.5 px-5 font-semibold text-[12px] text-secondary-text uppercase tracking-[0.12em]">Status</th>
-                <th className="py-3.5 px-5 font-semibold text-[12px] text-secondary-text uppercase tracking-[0.12em] text-right">Actions</th>
+                <th className="py-3 px-4 font-medium text-[11px] text-secondary-text uppercase tracking-wider">Property</th>
+                <th className="py-3 px-4 font-medium text-[11px] text-secondary-text uppercase tracking-wider">Location</th>
+                <th className="py-3 px-4 font-medium text-[11px] text-secondary-text uppercase tracking-wider">Price</th>
+                <th className="py-3 px-4 font-medium text-[11px] text-secondary-text uppercase tracking-wider">Status</th>
+                <th className="py-3 px-4 font-medium text-[11px] text-secondary-text uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {(!rooms || rooms.length === 0) ? (
                 <tr>
-                  <td colSpan={5} className="py-16 px-5 text-center">
-                    <p className="text-[15px] text-secondary-text">No rooms listed yet.</p>
+                  <td colSpan={5} className="py-12 px-4 text-center">
+                    <p className="text-[13px] text-secondary-text">No rooms listed yet.</p>
                   </td>
                 </tr>
               ) : (
                 rooms.map((room) => (
-                  <tr key={room.id} className="border-b border-border-color hover:bg-gray-50/50 transition-colors group">
-                    <td className="py-3.5 px-5 align-middle">
+                  <tr key={room.id} className="border-b border-border-color hover:bg-accent-light/30 transition-colors">
+                    <td className="py-3 px-4 align-middle">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gray-100 shrink-0 overflow-hidden relative">
+                        <div className="w-9 h-9 rounded-lg bg-gray-100 shrink-0 overflow-hidden">
                           {room.room_images?.[0]?.image_url ? (
-                            <img src={room.room_images[0].image_url} alt={room.title} className="w-full h-full object-cover" />
+                            <img src={room.room_images[0].image_url} alt="" className="w-full h-full object-cover" />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-secondary-text/40 text-[11px] font-medium">
-                              —
-                            </div>
+                            <div className="w-full h-full flex items-center justify-center text-secondary-text/30 text-[10px] font-medium">—</div>
                           )}
                         </div>
                         <div>
-                          <p className="text-[14px] font-medium text-primary-text">{room.title}</p>
-                          <p className="text-[13px] text-secondary-text">{room.property_type}</p>
+                          <p className="text-[13px] font-medium text-primary-text">{room.title}</p>
+                          <p className="text-[11px] text-secondary-text">{room.property_type}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="py-3.5 px-5 align-middle">
-                      <p className="text-[14px] text-primary-text">{room.location_name}</p>
+                    <td className="py-3 px-4 align-middle">
+                      <p className="text-[13px] text-primary-text">{room.location_name}</p>
                     </td>
-                    <td className="py-3.5 px-5 align-middle">
-                      <p className="text-[14px] font-medium text-primary-text">₹{room.price.toLocaleString("en-IN")}</p>
-                      <p className="text-[12px] text-secondary-text">/ month</p>
+                    <td className="py-3 px-4 align-middle">
+                      <p className="text-[13px] font-medium text-primary-text">₹{room.price.toLocaleString("en-IN")}</p>
                     </td>
-                    <td className="py-3.5 px-5 align-middle">
-                      <div className={`inline-flex items-center px-2.5 py-0.5 rounded-lg text-[12px] font-medium border ${
-                        room.available 
-                          ? "bg-gray-50 text-primary-text border-border-color" 
-                          : "bg-gray-50 text-secondary-text border-border-color"
+                    <td className="py-3 px-4 align-middle">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium border ${
+                        room.available
+                          ? "text-success bg-success-bg border-success/20"
+                          : "text-secondary-text bg-gray-50 border-border-color"
                       }`}>
                         {room.available ? "Available" : "Occupied"}
-                      </div>
+                      </span>
                     </td>
-                    <td className="py-3.5 px-5 align-middle text-right">
-                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Link href={`/admin/edit-room/${room.id}`} className="p-2 text-secondary-text hover:text-primary-text hover:bg-gray-100 rounded-lg transition-colors inline-flex" title="Edit">
-                          <Edit2 className="w-4 h-4" />
-                        </Link>
-                        <button className="p-2 text-error hover:bg-error/10 rounded-lg transition-colors" title="Delete">
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
+                    <td className="py-3 px-4 align-middle text-right">
+                      <Link
+                        href={`/admin/edit-room/${room.id}`}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[12px] font-medium text-secondary-text hover:text-primary-text hover:bg-accent-light rounded-lg transition-colors"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                        Edit
+                      </Link>
                     </td>
                   </tr>
                 ))

@@ -8,22 +8,37 @@
   --color-secondary-text: #6B7280;
   --color-border-color: #E5E7EB;
   --color-accent: #0F172A;
-  --color-error: #EF4444;
+  --color-accent-hover: #1E293B;
+  --color-accent-light: #F1F5F9;
+  --color-error: #DC2626;
+  --color-error-bg: #FEF2F2;
+  --color-success: #059669;
+  --color-success-bg: #ECFDF5;
+  --color-warning: #D97706;
+  --color-warning-bg: #FFFBEB;
 
   --font-sans: var(--font-geist-sans);
 }
 
+/* ─── Scrollbar ─── */
 ::-webkit-scrollbar {
   width: 0px;
   background: transparent;
 }
 
-/* ─── Leaflet overrides ─── */
+/* ─── Focus ring utility ─── */
+*:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ─── Leaflet ─── */
 .leaflet-container {
   width: 100%;
   height: 100%;
   z-index: 0;
-  font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
 .custom-leaflet-marker {
@@ -31,12 +46,19 @@
   border: none !important;
 }
 
-.gm-style .gm-style-iw-c {
-  padding: 0 !important;
-  border-radius: 16px !important;
+/* ─── Input/Select base ─── */
+input,
+select,
+textarea {
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
 
-/* ─── Range input ─── */
+input::placeholder,
+textarea::placeholder {
+  color: #9CA3AF;
+}
+
+/* ─── Input range ─── */
 input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -51,7 +73,7 @@ input[type="range"]::-webkit-slider-thumb {
   appearance: none;
   width: 16px;
   height: 16px;
-  background: #111827;
+  background: var(--color-accent);
   border-radius: 50%;
   cursor: pointer;
 }
@@ -59,15 +81,20 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-moz-range-thumb {
   width: 16px;
   height: 16px;
-  background: #111827;
+  background: var(--color-accent);
   border-radius: 50%;
   cursor: pointer;
   border: none;
 }
 
-/* ─── Radio buttons ─── */
+/* ─── Checkbox base ─── */
+input[type="checkbox"] {
+  accent-color: var(--color-accent);
+}
+
+/* ─── Radio ─── */
 input[type="radio"]:checked + div {
-  background: #F3F4F6;
-  color: #111827;
-  border-color: #111827;
+  background: var(--color-accent-light);
+  color: var(--color-primary-text);
+  border-color: var(--color-accent);
 }

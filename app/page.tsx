@@ -11,10 +11,10 @@ import { createClient } from "@/utils/supabase/client";
 const MapComponent = dynamic(() => import("@/components/MapComponent"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full bg-background flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-6 h-6 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
-        <div className="text-[14px] text-secondary-text font-medium">Loading map...</div>
+    <div className="w-full h-full flex items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-2">
+        <div className="w-5 h-5 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
+        <p className="text-[13px] text-secondary-text">Loading map...</p>
       </div>
     </div>
   ),
@@ -86,9 +86,9 @@ export default function Home() {
     return (
       <main className="relative w-full h-full overflow-hidden bg-background">
         <div className="w-full h-full flex items-center justify-center">
-          <div className="flex flex-col items-center gap-3">
-            <div className="w-6 h-6 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
-            <div className="text-[14px] text-secondary-text font-medium">Loading rooms...</div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="w-5 h-5 border-2 border-primary-text/20 border-t-primary-text rounded-full animate-spin" />
+            <p className="text-[13px] text-secondary-text">Loading rooms...</p>
           </div>
         </div>
       </main>
@@ -97,35 +97,33 @@ export default function Home() {
 
   return (
     <main className="relative w-full h-full overflow-hidden bg-background">
-      <div className="w-full h-full">
-        <SplitPanel
-          orientation="horizontal"
-          defaultRatio={0.65}
-          first={
-            <div className="w-full h-full p-2">
-              <div className="w-full h-full rounded-xl overflow-hidden border border-border-color">
-                <MapComponent
-                  rooms={rooms}
-                  onRoomSelect={handleRoomSelect}
-                  center={userLocation ? [userLocation.lat, userLocation.lng] : undefined}
-                  zoom={userLocation ? 14 : undefined}
-                />
-              </div>
+      <SplitPanel
+        orientation="horizontal"
+        defaultRatio={0.65}
+        first={
+          <div className="w-full h-full p-2">
+            <div className="w-full h-full rounded-lg overflow-hidden border border-border-color">
+              <MapComponent
+                rooms={rooms}
+                onRoomSelect={handleRoomSelect}
+                center={userLocation ? [userLocation.lat, userLocation.lng] : undefined}
+                zoom={userLocation ? 14 : undefined}
+              />
             </div>
-          }
-          second={
-            <div className="w-full h-full p-2 pr-3">
-              <div className="w-full h-full rounded-xl overflow-hidden border border-border-color bg-surface">
-                <RoomListPanel
-                  rooms={rooms}
-                  selectedRoomId={selectedRoom?.id || null}
-                  onRoomSelect={handleRoomSelect}
-                />
-              </div>
+          </div>
+        }
+        second={
+          <div className="w-full h-full p-2 pr-3">
+            <div className="w-full h-full rounded-lg overflow-hidden border border-border-color bg-surface">
+              <RoomListPanel
+                rooms={rooms}
+                selectedRoomId={selectedRoom?.id || null}
+                onRoomSelect={handleRoomSelect}
+              />
             </div>
-          }
-        />
-      </div>
+          </div>
+        }
+      />
 
       <RoomDetailDrawer
         room={selectedRoom}

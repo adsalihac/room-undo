@@ -36,20 +36,20 @@ const createCustomIcon = (room: Room, isSelected: boolean) => {
   const formattedPrice = `₹${room.price.toLocaleString("en-IN")}`;
 
   const html = `
-    <div class="transition-all duration-200 ${isSelected ? 'scale-110 z-[1000]' : ''}" style="filter: ${isSelected ? 'drop-shadow(0 8px 24px rgba(0,0,0,0.15))' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.06))'};">
+    <div style="transition: all 200ms ease; transform: ${isSelected ? 'scale(1.1)' : 'scale(1)'};">
       <div style="
-        background: white;
-        border-radius: 10px;
-        padding: 8px 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: ${isSelected ? '1.5px solid #111827' : '1px solid #E5E7EB'};
+        background: ${isSelected ? '#0F172A' : 'white'};
+        border-radius: 8px;
+        padding: 6px 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border: 1px solid ${isSelected ? '#0F172A' : '#E5E7EB'};
         transition: all 200ms ease;
-        font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+        font-family: var(--font-geist-sans), system-ui, sans-serif;
       ">
-        <div style="font-weight: 700; font-size: 13px; color: #111827; white-space: nowrap; letter-spacing: -0.01em;">
+        <div style="font-weight: 700; font-size: 12px; color: ${isSelected ? 'white' : '#111827'}; white-space: nowrap; letter-spacing: -0.01em;">
           ${formattedPrice}
         </div>
-        <div style="font-weight: 500; font-size: 11px; color: #6B7280; white-space: nowrap; margin-top: 1px;">
+        <div style="font-weight: 500; font-size: 10px; color: ${isSelected ? 'rgba(255,255,255,0.7)' : '#6B7280'}; white-space: nowrap; margin-top: 1px;">
           ${room.property_type}
         </div>
       </div>
@@ -59,8 +59,8 @@ const createCustomIcon = (room: Room, isSelected: boolean) => {
   return L.divIcon({
     html,
     className: 'custom-leaflet-marker',
-    iconSize: [100, 54],
-    iconAnchor: [50, 27],
+    iconSize: [100, 50],
+    iconAnchor: [50, 25],
   });
 };
 
