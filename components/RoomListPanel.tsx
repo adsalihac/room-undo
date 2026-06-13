@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { Search, Plus, User, Heart, BarChart3 } from "lucide-react";
+import { useState, useMemo, useEffect, useCallback } from "react";
+import { Search, Plus, User, Heart, BarChart3, Clock, X } from "lucide-react";
 import Link from "next/link";
 import RoomCard from "./RoomCard";
 import Logo from "./Logo";
@@ -40,69 +40,81 @@ function SkeletonCard() {
   );
 }
 
+const RECENT_SEARCHES_KEY = "recentSearches";
+
 export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loading }: RoomListPanelProps) {
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState<string>("All");
+  const [filterTag, setFilterTag] = useState<string>("All");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 100000]);
   const [showSavedRooms, setShowSavedRooms] = useState(false);
   const [compareRooms, setCompareRooms] = useState<string[]>([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
-
-  // Get saved rooms from localStorage
   const [savedRooms, setSavedRooms] = useState<string[]>([]);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+
+  const allTags = useMemo(() => {
+    const tags = new Set<string>();
+    rooms.forEach((r) => r.tags?.forEach((t) => tags.add(t)));
+    return ["All", ...Array.from(tags).sort()];
+  }, [rooms]);
+
   useEffect(() => {
     const stored = localStorage.getItem("savedRooms");
-    if (stored) {
-      setSavedRooms(JSON.parse(stored));
-    }
+    if (stored) setSavedRooms(JSON.parse(stored));
+    const searchStored = localStorage.getItem(RECENT_SEARCHES_KEY);
+    if (searchStored) setRecentSearches(JSON.parse(searchStored));
   }, []);
 
-  // Listen for localStorage changes from other components
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "savedRooms" && e.newValue) {
-        setSavedRooms(JSON.parse(e.newValue));
-      }
+      if (e.key === "savedRooms" && e.newValue) setSavedRooms(JSON.parse(e.newValue));
     };
-
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const saveRecentSearch = useCallback((term: string) => {
+    if (!term.trim()) return;
+    setRecentSearches((prev) => {
+      const updated = [term, ...prev.filter((s) => s !== term)].slice(0, 5);
+      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+      return updated;
+    });
   }, []);
 
   const propertyTypes = ["All", ...new Set(rooms.map((r) => r.property_type))];
   const maxPrice = useMemo(() => Math.max(...rooms.map((r) => r.price), 10000), [rooms]);
 
-  // Get saved room objects
   const savedRoomObjects = rooms.filter((room) => savedRooms.includes(room.id));
 
-  // Combined and filtered rooms based on current view
   const displayRooms = showSavedRooms
-    ? savedRoomObjects.filter((room) => {
-        const matchSearch =
-          !search ||
-          room.title.toLowerCase().includes(search.toLowerCase()) ||
-          room.location_name.toLowerCase().includes(search.toLowerCase());
-        return matchSearch;
-      })
+    ? savedRoomObjects.filter((room) =>
+        !search || room.title.toLowerCase().includes(search.toLowerCase()) || room.location_name.toLowerCase().includes(search.toLowerCase())
+      )
     : rooms.filter((room) => {
-        const matchSearch =
-          !search ||
-          room.title.toLowerCase().includes(search.toLowerCase()) ||
-          room.location_name.toLowerCase().includes(search.toLowerCase());
+        const matchSearch = !search || room.title.toLowerCase().includes(search.toLowerCase()) || room.location_name.toLowerCase().includes(search.toLowerCase());
         const matchType = filterType === "All" || room.property_type === filterType;
+        const matchTag = filterTag === "All" || (room.tags?.includes(filterTag) ?? false);
         const matchPrice = room.price >= priceRange[0] && room.price <= priceRange[1];
-        return matchSearch && matchType && matchPrice;
+        return matchSearch && matchType && matchTag && matchPrice;
       });
 
   const filtered = rooms.filter((room) => {
-    const matchSearch =
-      !search ||
-      room.title.toLowerCase().includes(search.toLowerCase()) ||
-      room.location_name.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = !search || room.title.toLowerCase().includes(search.toLowerCase()) || room.location_name.toLowerCase().includes(search.toLowerCase());
     const matchType = filterType === "All" || room.property_type === filterType;
+    const matchTag = filterTag === "All" || (room.tags?.includes(filterTag) ?? false);
     const matchPrice = room.price >= priceRange[0] && room.price <= priceRange[1];
-    return matchSearch && matchType && matchPrice;
+    return matchSearch && matchType && matchTag && matchPrice;
   });
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+  };
+
+  const handleSearchSubmit = () => {
+    if (search.trim()) saveRecentSearch(search.trim());
+  };
 
   return (
     <div className="h-full flex flex-col bg-surface">
@@ -114,11 +126,10 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
         <div className="flex items-center gap-2">
           <Link
             href="/admin/add-room"
-            className="inline-flex items-center gap-1.5 px-5 h-[38px] text-[13px] font-extrabold text-white rounded-full shadow-md transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
-            style={{ backgroundColor: "#FF385C" }}
+            className="inline-flex items-center justify-center w-[38px] h-[38px] text-secondary-text rounded-full hover:bg-accent-light hover:text-accent transition-colors border border-border-color/50"
+            aria-label="Post Room"
           >
             <Plus className="w-4 h-4" />
-            <span>Post Room</span>
           </Link>
           <Link
             href="/login"
@@ -141,19 +152,12 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
             }`}
           >
             <div className="flex items-center gap-2">
-              <Heart
-                className={`w-4 h-4 ${showSavedRooms ? "fill-red-500 text-red-500" : "text-secondary-text"}`}
-              />
+              <Heart className={`w-4 h-4 ${showSavedRooms ? "fill-red-500 text-red-500" : "text-secondary-text"}`} />
               <span className="text-[14px] font-extrabold" style={{ color: showSavedRooms ? "#DC2626" : "#222222" }}>
                 Saved Rooms ({savedRooms.length})
               </span>
             </div>
-            <svg
-              className={`w-4 h-4 transition-transform ${showSavedRooms ? "rotate-180" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className={`w-4 h-4 transition-transform ${showSavedRooms ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
           </button>
@@ -166,11 +170,33 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
           <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-secondary-text" />
           <input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSearchSubmit(); }}
             placeholder="Search rooms..."
             className="w-full pl-10 pr-4 h-[42px] rounded-xl border border-border-color bg-background text-[14px] text-primary-text font-semibold placeholder:text-gray-400 outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all"
           />
         </div>
+        {/* Recent Searches */}
+        {recentSearches.length > 0 && (
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+            <Clock className="w-3 h-3 shrink-0 text-secondary-text" />
+            {recentSearches.map((term) => (
+              <button
+                key={term}
+                onClick={() => { setSearch(term); saveRecentSearch(term); }}
+                className="shrink-0 flex items-center gap-1 px-2.5 h-[28px] rounded-full text-[11px] font-bold border border-border-color bg-background text-secondary-text hover:border-gray-300 hover:text-primary-text transition-all"
+              >
+                {term}
+                <X className="w-3 h-3" onClick={(e) => {
+                  e.stopPropagation();
+                  const updated = recentSearches.filter((s) => s !== term);
+                  setRecentSearches(updated);
+                  localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
+                }} />
+              </button>
+            ))}
+          </div>
+        )}
         <div className="flex gap-2 overflow-x-auto pb-0.5">
           {propertyTypes.map((type) => (
             <button
@@ -187,55 +213,40 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
             </button>
           ))}
         </div>
+        {/* Tag filters */}
+        {allTags.length > 1 && (
+          <div className="flex gap-2 overflow-x-auto pb-0.5">
+            {allTags.map((tag) => (
+              <button
+                key={tag}
+                onClick={() => setFilterTag(tag)}
+                className={`shrink-0 px-3 h-[28px] rounded-full text-[10px] font-extrabold transition-all ${
+                  filterTag === tag
+                    ? "text-white shadow-sm"
+                    : "text-secondary-text bg-background border border-border-color hover:border-gray-300"
+                }`}
+                style={filterTag === tag ? { backgroundColor: "#428BFF" } : undefined}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Price range */}
       <div className="px-5 py-3 border-b border-border-color/30">
         <div className="flex items-center justify-between mb-2.5">
-          <label className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider">
-            Price Range
-          </label>
+          <label className="text-[12px] font-extrabold text-secondary-text uppercase tracking-wider">Price Range</label>
           <span className="text-[12px] font-bold text-secondary-text">
             ₹{priceRange[0].toLocaleString("en-IN")} – ₹{priceRange[1].toLocaleString("en-IN")}
           </span>
         </div>
         <div className="relative h-6">
-          <div
-            className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full w-full"
-            style={{ backgroundColor: "#EEEEEE" }}
-          />
-          <div
-            className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full"
-            style={{
-              left: `${(priceRange[0] / maxPrice) * 100}%`,
-              width: `${((priceRange[1] - priceRange[0]) / maxPrice) * 100}%`,
-              backgroundColor: "#FF385C",
-            }}
-          />
-          <input
-            type="range"
-            min={0}
-            max={maxPrice}
-            step={1000}
-            value={priceRange[0]}
-            onChange={(e) =>
-              setPriceRange([Math.min(Number(e.target.value), priceRange[1] - 1000), priceRange[1]])
-            }
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-            style={{ pointerEvents: "auto" }}
-          />
-          <input
-            type="range"
-            min={0}
-            max={maxPrice}
-            step={1000}
-            value={priceRange[1]}
-            onChange={(e) =>
-              setPriceRange([priceRange[0], Math.max(Number(e.target.value), priceRange[0] + 1000)])
-            }
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-            style={{ pointerEvents: "auto" }}
-          />
+          <div className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full w-full" style={{ backgroundColor: "#EEEEEE" }} />
+          <div className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full" style={{ left: `${(priceRange[0] / maxPrice) * 100}%`, width: `${((priceRange[1] - priceRange[0]) / maxPrice) * 100}%`, backgroundColor: "#FF385C" }} />
+          <input type="range" min={0} max={maxPrice} step={1000} value={priceRange[0]} onChange={(e) => setPriceRange([Math.min(Number(e.target.value), priceRange[1] - 1000), priceRange[1]])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" style={{ pointerEvents: "auto" }} />
+          <input type="range" min={0} max={maxPrice} step={1000} value={priceRange[1]} onChange={(e) => setPriceRange([priceRange[0], Math.max(Number(e.target.value), priceRange[0] + 1000)])} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" style={{ pointerEvents: "auto" }} />
         </div>
       </div>
 
@@ -246,22 +257,12 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
         </p>
         <div className="flex items-center gap-2">
           {compareRooms.length >= 2 && (
-            <button
-              onClick={() => setShowCompareModal(true)}
-              className="flex items-center gap-1.5 px-3 h-[30px] rounded-full text-[12px] font-extrabold text-white transition-all hover:shadow-md"
-              style={{ backgroundColor: "#FF385C" }}
-            >
-              <BarChart3 className="w-3.5 h-3.5" />
-              Compare ({compareRooms.length})
+            <button onClick={() => setShowCompareModal(true)} className="flex items-center gap-1.5 px-3 h-[30px] rounded-full text-[12px] font-extrabold text-white transition-all hover:shadow-md" style={{ backgroundColor: "#FF385C" }}>
+              <BarChart3 className="w-3.5 h-3.5" /> Compare ({compareRooms.length})
             </button>
           )}
           {compareRooms.length > 0 && (
-            <button
-              onClick={() => setCompareRooms([])}
-              className="text-[11px] font-bold text-secondary-text hover:text-accent transition-colors"
-            >
-              Clear
-            </button>
+            <button onClick={() => setCompareRooms([])} className="text-[11px] font-bold text-secondary-text hover:text-accent transition-colors">Clear</button>
           )}
         </div>
       </div>
@@ -302,11 +303,7 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
               compareSelected={compareRooms.includes(room.id)}
               onCompareToggle={(roomId) => {
                 setCompareRooms((prev) =>
-                  prev.includes(roomId)
-                    ? prev.filter((id) => id !== roomId)
-                    : prev.length < 3
-                      ? [...prev, roomId]
-                      : prev
+                  prev.includes(roomId) ? prev.filter((id) => id !== roomId) : prev.length < 3 ? [...prev, roomId] : prev
                 );
               }}
             />
@@ -315,10 +312,7 @@ export default function RoomListPanel({ rooms, selectedRoomId, onRoomSelect, loa
       </div>
 
       {showCompareModal && (
-        <CompareModal
-          rooms={rooms.filter((r) => compareRooms.includes(r.id))}
-          onClose={() => setShowCompareModal(false)}
-        />
+        <CompareModal rooms={rooms.filter((r) => compareRooms.includes(r.id))} onClose={() => setShowCompareModal(false)} />
       )}
 
       <Footer />

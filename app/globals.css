@@ -20,6 +20,9 @@
   --color-success-bg: #E6F7E6;
   --color-warning: #FF9600;
   --color-warning-bg: #FFF4E0;
+  --color-surface-raised: #FFFFFF;
+  --color-overlay: rgba(0,0,0,0.08);
+  --color-badge-bg: #F0F0F0;
 
   --font-sans: var(--font-sans, "Nunito", system-ui, sans-serif);
 }

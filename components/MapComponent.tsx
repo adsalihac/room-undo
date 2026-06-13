@@ -22,8 +22,11 @@ export interface Room {
   image_url: string;
   images: string[];
   amenities: string[];
+  tags: string[];
   reviews: { username: string; rating: number; comment: string; date?: string; verified?: boolean; helpful?: number }[];
   featured: boolean;
+  created_at: string;
+  views: number;
 }
 
 interface MapComponentProps {

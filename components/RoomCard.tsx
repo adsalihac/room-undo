@@ -14,8 +14,19 @@ interface RoomCardProps {
   onCompareToggle?: (roomId: string) => void;
 }
 
+function getAgeLabel(dateStr: string): { label: string; color: string; bg: string } | null {
+  if (!dateStr) return null;
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const days = Math.floor(diff / 86400000);
+  if (days < 1) return { label: "New", color: "#00A699", bg: "#E8F5E9" };
+  if (days < 7) return { label: `${days}d`, color: "#FF9600", bg: "#FFF4E0" };
+  if (days < 30) return { label: `${Math.floor(days / 7)}w`, color: "#717171", bg: "#F7F7F7" };
+  return null;
+}
+
 export default function RoomCard({ room, isSelected, onClick, savedRooms, toggleSaved, comparisonMode, compareSelected, onCompareToggle }: RoomCardProps) {
   const saved = savedRooms.includes(room.id);
+  const ageBadge = getAgeLabel(room.created_at);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" || e.key === " ") {
@@ -50,11 +61,32 @@ export default function RoomCard({ room, isSelected, onClick, savedRooms, toggle
                     Featured
                   </span>
                 )}
+                {ageBadge && (
+                  <span className="shrink-0 px-2 py-0.5 rounded-full text-[10px] font-extrabold"
+                    style={{ backgroundColor: ageBadge.bg, color: ageBadge.color }}
+                  >
+                    {ageBadge.label}
+                  </span>
+                )}
               </div>
               <div className="flex items-center gap-1 mt-1">
                 <MapPin className="w-3 h-3 shrink-0 text-secondary-text" />
                 <span className="text-[13px] text-secondary-text truncate font-medium">{room.location_name}</span>
               </div>
+              {room.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-1.5">
+                  {room.tags.slice(0, 3).map((tag) => (
+                    <span key={tag} className="px-2 py-0.5 rounded-full text-[9px] font-extrabold"
+                      style={{ backgroundColor: "var(--color-badge-bg)", color: "var(--color-secondary-text)" }}
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {room.tags.length > 3 && (
+                    <span className="text-[9px] font-bold text-secondary-text">+{room.tags.length - 3}</span>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-1.5">
               {comparisonMode && (

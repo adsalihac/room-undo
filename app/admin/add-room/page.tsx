@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin, Loader2, X } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 const LocationPicker = dynamic(() => import("@/components/LocationPicker"), { ssr: false });
@@ -27,6 +27,10 @@ const schema = z.object({
 export default function AddRoom() {
   const [coordinates, setCoordinates] = useState({ lat: 10.8505, lng: 76.2711 });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [amenities, setAmenities] = useState<string[]>([]);
+  const [tags, setTags] = useState<string[]>([]);
+  const [amenityInput, setAmenityInput] = useState("");
+  const [tagInput, setTagInput] = useState("");
   const router = useRouter();
   const supabase = createClient();
 
@@ -46,6 +50,9 @@ export default function AddRoom() {
       latitude: coordinates.lat,
       longitude: coordinates.lng,
       available: true,
+      amenities,
+      tags,
+      featured: false,
     };
 
     const { error } = await supabase.from("rooms").insert([payload]);
@@ -200,6 +207,75 @@ export default function AddRoom() {
                 className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold placeholder:text-gray-400 outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background"
               />
             </div>
+          </div>
+        </div>
+
+        <div className="bg-surface p-6 rounded-2xl border-2 border-border-color/50 shadow-lg space-y-5">
+          <div className="flex items-center gap-2 pb-2 border-b-2 border-border-color/40">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: "#00A699" }} />
+            <h2 className="text-[14px] font-extrabold text-primary-text uppercase tracking-wider">Features &amp; Amenities</h2>
+          </div>
+
+          <div>
+            <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Amenities</label>
+            <p className="text-[12px] text-secondary-text font-bold mb-2">Type an amenity and press Enter to add it.</p>
+            <div className="flex flex-wrap gap-2 mb-2.5">
+              {amenities.map((a) => (
+                <span key={a} className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-extrabold bg-accent-light text-accent">
+                  {a}
+                  <button onClick={() => setAmenities((prev) => prev.filter((x) => x !== a))} className="p-0.5 rounded-full hover:bg-accent/20 transition-colors">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <input
+              value={amenityInput}
+              onChange={(e) => setAmenityInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  const val = amenityInput.trim();
+                  if (val && !amenities.includes(val)) {
+                    setAmenities((prev) => [...prev, val]);
+                    setAmenityInput("");
+                  }
+                }
+              }}
+              placeholder="e.g. WiFi, AC, Parking, Geyser"
+              className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold placeholder:text-gray-400 outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[14px] font-extrabold text-primary-text mb-1.5">Tags</label>
+            <p className="text-[12px] text-secondary-text font-bold mb-2">Useful labels like &quot;Near Metro&quot;, &quot;Bachelor Friendly&quot;, etc.</p>
+            <div className="flex flex-wrap gap-2 mb-2.5">
+              {tags.map((t) => (
+                <span key={t} className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-extrabold" style={{ backgroundColor: "#EBF4FF", color: "#428BFF" }}>
+                  {t}
+                  <button onClick={() => setTags((prev) => prev.filter((x) => x !== t))} className="p-0.5 rounded-full opacity-60 hover:opacity-100 transition-opacity">
+                    <X className="w-3 h-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+            <input
+              value={tagInput}
+              onChange={(e) => setTagInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  const val = tagInput.trim();
+                  if (val && !tags.includes(val)) {
+                    setTags((prev) => [...prev, val]);
+                    setTagInput("");
+                  }
+                }
+              }}
+              placeholder="e.g. Near Metro, Bachelor Friendly, Gated Security"
+              className="w-full px-4 py-3 rounded-xl border-2 border-border-color text-[14px] text-primary-text font-bold placeholder:text-gray-400 outline-none focus:border-accent/40 focus:ring-3 focus:ring-accent/10 transition-all bg-background"
+            />
           </div>
         </div>
 

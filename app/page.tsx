@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import RoomDetailDrawer from "@/components/RoomDetailDrawer";
 import SplitPanel from "@/components/SplitPanel";
 import RoomListPanel from "@/components/RoomListPanel";
@@ -58,7 +58,8 @@ export default function Home() {
         whatsapp: room.whatsapp || "",
         image_url: room.room_images?.[0]?.image_url || "",
         images: (room.room_images || []).map((img: any) => img.image_url),
-        amenities: [],
+        amenities: room.amenities || [],
+        tags: room.tags || [],
         reviews: room.reviews?.map((r: any) => ({
           username: r.username || r.user_name || "Anonymous",
           rating: r.rating || 0,
@@ -68,6 +69,8 @@ export default function Home() {
           helpful: r.helpful ?? 0,
         })) || [],
         featured: room.featured ?? false,
+        created_at: room.created_at || new Date().toISOString(),
+        views: room.views || 0,
       }));
       setRooms(mappedRooms);
       setLoading(false);
@@ -86,9 +89,13 @@ export default function Home() {
     }
   }, []);
 
-  const handleRoomSelect = (room: Room) => {
+  const handleRoomSelect = useCallback((room: Room) => {
     setSelectedRoom(room);
-  };
+    // Increment view counter
+    const supabase = createClient();
+    void supabase.rpc("increment_room_views", { room_id: room.id });
+    setRooms((prev) => prev.map((r) => r.id === room.id ? { ...r, views: (r.views || 0) + 1 } : r));
+  }, []);
 
   if (loading) {
     return (
@@ -133,6 +140,7 @@ export default function Home() {
       <RoomDetailDrawer
         room={selectedRoom}
         onClose={() => setSelectedRoom(null)}
+        allRooms={rooms}
       />
     </main>
   );

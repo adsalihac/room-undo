@@ -20,6 +20,10 @@ CREATE TABLE rooms (
   owner_name TEXT NOT NULL,
   phone TEXT NOT NULL,
   whatsapp TEXT NOT NULL,
+  amenities JSONB DEFAULT '[]'::jsonb NOT NULL,
+  tags JSONB DEFAULT '[]'::jsonb NOT NULL,
+  featured BOOLEAN DEFAULT false NOT NULL,
+  views INTEGER DEFAULT 0 NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -31,13 +35,6 @@ CREATE TABLE room_images (
   image_url TEXT NOT NULL
 );
 
--- Create amenities table
-CREATE TABLE amenities (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  room_id UUID REFERENCES rooms(id) ON DELETE CASCADE NOT NULL,
-  name TEXT NOT NULL
-);
-
 -- Create reviews table
 CREATE TABLE reviews (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -45,27 +42,40 @@ CREATE TABLE reviews (
   username TEXT NOT NULL,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   comment TEXT NOT NULL,
+  date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  verified BOOLEAN DEFAULT true NOT NULL,
+  helpful INTEGER DEFAULT 0 NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
+
+-- Function to increment room views
+CREATE OR REPLACE FUNCTION increment_room_views(room_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  UPDATE rooms
+  SET views = views + 1
+  WHERE id = room_id;
+END;
+$$;
 
 -- Setup Row Level Security (RLS)
 ALTER TABLE rooms ENABLE ROW LEVEL SECURITY;
 ALTER TABLE room_images ENABLE ROW LEVEL SECURITY;
-ALTER TABLE amenities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read access to all tables
 CREATE POLICY "Public read access to rooms" ON rooms FOR SELECT USING (true);
 CREATE POLICY "Public read access to room_images" ON room_images FOR SELECT USING (true);
-CREATE POLICY "Public read access to amenities" ON amenities FOR SELECT USING (true);
 CREATE POLICY "Public read access to reviews" ON reviews FOR SELECT USING (true);
 
 -- Allow authenticated admins to do everything
 CREATE POLICY "Admin full access to rooms" ON rooms FOR ALL USING (auth.role() = 'authenticated');
 CREATE POLICY "Admin full access to room_images" ON room_images FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Admin full access to amenities" ON amenities FOR ALL USING (auth.role() = 'authenticated');
 
--- Allow public to insert reviews (optional depending on app design, here we allow it for simplicity)
+-- Allow public to insert reviews
 CREATE POLICY "Public insert access to reviews" ON reviews FOR INSERT WITH CHECK (true);
 
 -- Create storage bucket for room images
