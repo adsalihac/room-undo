@@ -59,7 +59,14 @@ export default function Home() {
         image_url: room.room_images?.[0]?.image_url || "",
         images: (room.room_images || []).map((img: any) => img.image_url),
         amenities: [],
-        reviews: [],
+        reviews: room.reviews?.map((r: any) => ({
+          username: r.username || r.user_name || "Anonymous",
+          rating: r.rating || 0,
+          comment: r.comment || "",
+          date: r.date || r.created_at || new Date().toISOString(),
+          verified: r.verified ?? true,
+          helpful: r.helpful ?? 0,
+        })) || [],
         featured: room.featured ?? false,
       }));
       setRooms(mappedRooms);
